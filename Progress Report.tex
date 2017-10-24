@@ -1,0 +1,130 @@
+\documentclass[12pt, a4paper]{report} \usepackage[titletoc]{appendix}
+%\linespread{1.5}
+%\usepackage{lineno}
+%\linenumbers
+\usepackage{graphicx}
+	\graphicspath{{images/}} 
+\usepackage{geometry}
+	\geometry{a4paper,left=3cm,top=3cm,bottom=3cm,right=3cm}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{hyperref}
+	\hypersetup{colorlinks=true,allcolors=blue}
+\usepackage{hypcap}
+\usepackage{csquotes}
+\usepackage{subfig}
+
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0.1cm}
+
+\usepackage{courier}
+\usepackage{listings}
+	\lstset{
+ 		basicstyle=\ttfamily\scriptsize,
+ 		frame=single,
+ 		breaklines=true,
+ 		numbers=left,
+ 		xleftmargin=2.5em,
+ 		framexleftmargin=0em,
+ 		emph={
+ 	class, extends, operation, abstract,
+ 	context, constraint, check,
+ 	for, if, return, true, and, ref,
+ 	message, in, package, val, attr, 
+ 	@link, @node, @compartment,
+ 	@namespace, @diagram
+ 	},
+ 	emphstyle=\textbf
+	}
+	\lstdefinestyle{interfaces}{
+ 		float=t!
+	}
+
+
+\begin{document}
+
+\begin{titlepage}
+ \begin{center}
+
+\textbf{Progress Report}
+\vspace{1cm}
+
+\textbf{\large Hybrid Model Persistence}
+\vspace{1cm}
+
+Alfa Ryano Yohannis\\
+ary506@york.ac.uk
+\vspace{1cm}
+
+Supervisors:\\
+Dimitris Kolovos\\
+Fiona Polack\\
+\vspace{1cm}
+
+Department of Computer Science\\
+University of York\\
+United Kingdom\\
+\vspace{1cm}
+\today
+ 
+\vfill
+ 
+\end{center}
+\end{titlepage}
+
+
+\begin{abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Most of existing models are persisted in state-based formats. As an alternative, change-based persistence (CBP) also has been proposed. State-based persistence offers faster model loading time than change-based format, but outperformed by its counterpart when it comes to persisting and detecting changes of models. To gain the advantages of both approaches, this research aims to combine both type model representations to produce a hybrid model persistence. I am planning to integrate change-based approach into an existing state-based model persistences (e.g NeoEMF) and investigate the impact on change-detection, model merging, conflict resolution of models in the context of collaborative modelling. So far, a working implementation has been developed, and an algorithm to optimised the loading of CBP models has been proposed. Based on this work's previous investigation, CBPs persists changes of models faster than its state-based counterpart, and the proposed algorithm has been successfully loaded CBP models faster that its original loading approach. The implementation has been presented in the  FlexMDE 2017 workshop, and the proposed algorithm has been submitted to the FASE 2018 conference. 
+\end{abstract}
+
+\tableofcontents
+\addcontentsline{toc}{chapter}{Contents}
+
+\listoffigures
+\newpage
+ 
+\listoftables
+\newpage
+
+\lstlistoflistings
+\newpage
+
+\chapter{Introduction}
+\label{sec:introduction}
+Most of existing models are persisted in state-based formats. As an alternative, incremental-based persistence (CBP) also has been proposed \cite{koegel2010emfstore,yohannis2017turning}. State-based persistence offers faster model loading time than change-based format, but outperformed by its counterpart when it comes to persisting and detecting changes of models \cite{yohannis2017turning}. To gain the advantages of both approaches, this research aims to combine both type model representations to produce a hybrid model persistence. I am planning to integrate change-based approach into an existing state-based model persistences (e.g NeoEMF) and investigate the impact on change-detection, model merging, conflict resolution of models in the context of collaborative modelling.
+
+\section{Research Questions}
+\label{sec:research_questions}
+
+\section{Research Objectives}
+\label{sec:research_objectives}
+
+\section{Research Outputs}
+\label{sec:research_outputs}
+
+\section{Research Scoping}
+\label{sec:eesearch_scoping}
+
+\chapter{Progress Review}
+\label{ch:progress_review}
+
+\chapter{Research Plan}
+\label{ch:research_plan}
+
+
+
+\chapter{Publications}
+\label{ch:publications}
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+
+
+
+%\begin{appendices}
+%\end{appendices}
+
+\end{document}
