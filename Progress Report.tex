@@ -2,6 +2,12 @@
 %\linespread{1.5}
 %\usepackage{lineno}
 %\linenumbers
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
 \usepackage{graphicx}
 	\graphicspath{{images/}} 
 \usepackage{geometry}
@@ -11,34 +17,67 @@
 \usepackage{hyperref}
 	\hypersetup{colorlinks=true,allcolors=blue}
 \usepackage{hypcap}
-\usepackage{csquotes}
-\usepackage{subfig}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+\usepackage{courier}
+\usepackage{listings}
+\lstset{
+	basicstyle=\ttfamily,
+	frame=none, 
+	breaklines=true,
+	numbers=left,
+	xleftmargin=2.5em,
+	framexleftmargin=0em,
+	emphstyle=\textbf,
+	float=t
+}
+\lstdefinestyle{ocl}{
+	emph={
+		context, inv
+	}
+}
+\lstdefinestyle{cbp}{
+	basicstyle=\ttfamily\scriptsize,
+	emph={
+		session, create, of, type,
+		set, to, add, hire
+	}
+}
+\lstdefinestyle{xmi}{
+	basicstyle=\ttfamily\scriptsize,
+	emph={
+		Node, children
+	}
+}
+\lstdefinestyle{xml}{
+	basicstyle=\ttfamily\scriptsize,
+	emph={
+		register, create, add, to, resource,
+		from, eattribute, remove, ereference,
+		set, unset, session, Roy, Jen,
+		Moss, Richmond
+	}
+}
+\lstdefinestyle{java}{
+	basicstyle=\ttfamily\scriptsize,
+	emph={
+		case, UNSET,
+		instanceof, else, if, void,
+		new, UnsetEAttributeEvent,
+		UnsetEReferenceEvent,
+		@override, public, class, extends
+	}
+}
+\lstdefinestyle{eol}{
+	basicstyle=\ttfamily\scriptsize,
+	emph={
+		var, new, for, in, create, set, of, with, 
+		unset, to, add, remove, delete, register,
+		from, position, from, move-within, session, \.
+	}
+}
 
 \setlength{\parindent}{1cm}
 \setlength{\parskip}{0.1cm}
-
-\usepackage{courier}
-\usepackage{listings}
-	\lstset{
- 		basicstyle=\ttfamily\scriptsize,
- 		frame=single,
- 		breaklines=true,
- 		numbers=left,
- 		xleftmargin=2.5em,
- 		framexleftmargin=0em,
- 		emph={
- 	class, extends, operation, abstract,
- 	context, constraint, check,
- 	for, if, return, true, and, ref,
- 	message, in, package, val, attr, 
- 	@link, @node, @compartment,
- 	@namespace, @diagram
- 	},
- 	emphstyle=\textbf
-	}
-	\lstdefinestyle{interfaces}{
- 		float=t!
-	}
 
 
 \begin{document}
@@ -92,31 +131,478 @@ Most of existing models are persisted in state-based formats. As an alternative,
 
 \chapter{Introduction}
 \label{sec:introduction}
-Most of existing models are persisted in state-based formats. As an alternative, incremental-based persistence (CBP) also has been proposed \cite{koegel2010emfstore,yohannis2017turning}. State-based persistence offers faster model loading time than change-based format, but outperformed by its counterpart when it comes to persisting and detecting changes of models \cite{yohannis2017turning}. To gain the advantages of both approaches, this research aims to combine both type model representations to produce a hybrid model persistence. I am planning to integrate change-based approach into an existing state-based model persistences (e.g NeoEMF) and investigate the impact on change-detection, model merging, conflict resolution of models in the context of collaborative modelling.
+Existing approaches for file-based model persistence in metamodelling architectures such as MOF and EMF are predominately state-based. In such approaches, model files contain snapshots of the models' contents, and activities like version control and change detection are left to external systems such as file-based version-control systems and model differencing facilities. Activities such as model comparison and change detection are computationally consuming for state-based models and can become a burden when larger models are developed in a collaborative setting. 
+
+In contrast to persisting the \emph{state} of models, the authors of  proposed a change-based approach that persists the full sequence of \emph{changes} made to models instead. The change-based approach comes with a number of envisioned benefits over state-based persistence, such as the ability to detect changes much faster and more precisely, which can then have positive knock-on effects on helping developers compare and merge models in collaborative modelling environments, as well as on facilitating faster incremental model validation and transformation \cite{rath2012derived,ogunyomi2015property}. However, change-based persistence comes at the cost of larger and ever-growing model files, and increased model loading time since all recorded changes need to be replayed to reconstruct a model's state \cite{yohannis2017turning}.
 
 \section{Research Questions}
 \label{sec:research_questions}
+To obtain the benefits of both type model persistence, this research aims to combine both approaches to produce a hybrid model persistence. The main advantage, faster change-detection, the knock-on effects on model comparison and merging, and efforts to reduce the downsides will be investigated as the consequences of the integration. Thus, this work aims to answer this following research questions: 
+\begin{enumerate} 
+	\item How to integrate change-based persistence and state-based persistence? And to what extend is performance of change-detection is improved compared to state-based persistence? 
+	\item How to reduce the cost of larger and ever-growing file size and loading time of change-based models?
+	\item How to differentiate and compare change-based models? And what is its performance compared to state-based persistence?
+	\item How to resolve conflicts of and merge different change-based models? And how does it perform compared to state-based persistence?
+\end{enumerate}
 
 \section{Research Objectives}
 \label{sec:research_objectives}
+this research aims to meet the following research objectives:
+\begin{enumerate}
+	\item Develop an architecture that integrates change-based persistence and state-based persistence, and evaluate its performance against state-based persistence on change detection.
+	\item Develop algorithms to reduce file size and loading time of change-based persistence models, and evaluate its performance together with its side effects (i.e. memory footprints). 
+	\item Develop an algorithm to differentiate and compare change-based models, and evaluate its performance against its state-based counterparts.
+	\item Develop an algorithm to resolve conflict of and merge different change-based models, and evaluate its performance against resolving conflicts and merging in state-based persistence. 
+\end{enumerate}
 
 \section{Research Outputs}
 \label{sec:research_outputs}
+By the end of this research, these following outputs will have been produced:
+\begin{enumerate}
+	\item A prototype, which is the integration of change-based and state-based persistence.
+	\item Algorithms -- including their implementation and evaluation -- for file size and loading time reduction, changes detection, model differentiation and comparison, as well as conflict resolution and model merging of change-based persistence.
+	\item A publication for each research question, and a thesis report of this research. 
+\end{enumerate}
+
 
 \section{Research Scoping}
-\label{sec:eesearch_scoping}
+\label{sec:research_scoping}
+This research plan to integrate change-based and state-based persistence. Nevertheless, since the there are several existing instances of state-based persistence,  this research choose XMI and NeoEMF \cite{daniel2016neoemf}, as the former is the common standard of  model persistence and latter is a recent work that leverage the use of NoSQL databases for large-scale model persistence. 
 
 \chapter{Progress Review}
 \label{ch:progress_review}
 
+\section{Research Methods}
+\label{sec:research_methods}
+Design Science Research Methodology (DSRM) is selected as the main research method since the main output of this research is a design artefact, an environment to design and generate software modelling learning games. DSRM provides a comprehensive conceptual environment and activity guidelines for understanding, developing, executing, and evaluating a design artefact. Another reason is that it positions itself at the top level of abstraction without going into much detail of how to perform each activity, researchers can freely choose other more concrete research methods to carry out the activities. For example, literature reviews, surveys, or expert interviews can be conducted to determine research problems, motivations, solutions, and objectives as well as controlled experiments to measure and evaluate the effectiveness of the artefacts. DSRM consists of six activities: identify problem and motivation, define objectives for a solution, design and development, demonstration and evaluation, and communication. The progress of this research on these six activities are discussed in the following sections.
+
+\section{Literature Review}
+\label{sec:literature_review}
+
+\subsection{Change Detection}
+\label{subsec:change_detection}
+There are two approaches in the literature for identifying changes in models in order to enable incremental re-execution of model processing operations.
+
+\textbf{Notifications}. In this approach, an incremental execution engine is hooked into notification facilities provided by modelling tools through which the developer edits the model, so that the engine can directly receive notifications as soon as changes on a model happen (e.f. a feature has been modified). This is an approach taken by the IncQuery incremental pattern matching framework \cite{rath2012derived} and the ReactiveATL incremental model-to-model transformation engine \cite{ogunyomi2015property}. The main advantage of this approach is that precise and fine-grained change notifications are provided for free by the modelling tool (and thus do not need to be computed by the execution engine---which as discussed below can be expensive and inefficient). On the downside, this approach is a poor fit for collaborative development settings where modelling and automated model processing activities are performed by different members of the team.
+
+\textbf{Model Differencing}. This approach eliminates the coupling between modelling tools and incremental execution engines. Instead of depending on live notifications, in this approach the developer in charge of automated model processing, needs to have access to a copy of the last version of the model that the model processing program (e.g. the model-to-text transformation) was executed upon, so that it can be compared against the current version of the model (e.g. using a model-differencing framework such as SiDiff \cite{kelter2005generic} or EMFCompare\footnote{\url{https://www.eclipse.org/emf/compare/}}) and the delta can be computed on demand. The main advantage of this approach is that it works well in a collaborative development environment where typically developers have distinct roles and responsibilities. On the downside, model comparison and differencing are computationally expensive and memory-greedy (both versions of the model need to be loaded into memory before they can be compared), thus largely undermining the time and resource saving potentials of incremental re-execution. This approach is adopted by the Xpand model-to-text transformation language. According to the developers of the language, using this approach, a speed-up of only around 50\% is observed compared to non-incremental transformation\footnote{\url{http://wiki.eclipse.org/Xpand/New_And_Noteworthy\#Incremental_Generation}}, which is consistent with our experience from using Xpand.
+
+\subsection{Model Persistence}
+\label{subsec:model_persistence}
+Several works have investigated alternative -- but also state-based -- model persistence mechanisms to XMI, mainly by leveraging databases (both relational and NoSQL). For example, EMF Teneo\,\cite{eclipse2017teneo} persists EMF models in relational databases, while Morsa \cite{pagan2011morsa} and NeoEMF \cite{daniel2016neoemf} persist models in document and graph databases respectively. The main challenge with such approaches is version control. None of these approaches provides built-in support for versioning and models are eventually stored in binary files/folders which are known to be a poor fit for text-oriented version control systems like Git and SVN.
+
+Connected Data Objects (CDO) \cite{eclipse2017cdo}, provides support for database-backed model persistence as well as collaboration facilities, but its adoption necessitates the use of a separate version control system in the software development process (e.g. a Git repository for code and a CDO repository for models), which introduces well-recognised fragmentation and administration challenges \cite{barmpis2014evaluation}. Similar challenges are related to the adoption of other model-specific version control systems such as EMFStore\,\cite{koegel2010emfstore}.
+
+\section{Introduction to Incrementality}
+\label{introduction_to_incrementality}
+To illustrate the concept of incrementality, a contrived running example is used where after every modification to an organisational chart model (see Fig. \ref{fig:initial_chart_0}), the model needs to be:
+
+\begin{itemize}
+	\item Validated against a domain-specific constraint (that no employee directly manages more than 7 other employees).
+	\item Transformed into a number of employee reports (plain text files, one for each employee) through a model-to-text transformation. Each report should contain the name of the employee, and the names of her direct subordinates.
+\end{itemize}
+
+Figures \ref{fig:initial_chart_0} and \ref{fig:modified_chart} are two consecutive versions of a sample organisational chart model. When the validation constraint is evaluated against the first version of the model (Fig. \ref{fig:initial_chart_0}), it verifies that all three employees manage fewer than 7 other employees, and the model-to-text transformation then produces three text files that correspond to the employees in the model. In the sequel, in Fig. \ref{fig:modified_chart}, the model is updated to reflect that a new employee has been hired (Richmond) under the management of Jen. 
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{initial_chart_0}
+	\caption{Initial version of the organisational chart model.}
+	\label{fig:initial_chart_0}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{modified_chart}
+	\caption{Modified version of the organisational chart model of Fig. \ref{fig:initial_chart}.}
+	\label{fig:modified_chart}
+\end{figure}
+
+A non-incremental model validation engine would treat the model of Fig. \ref{fig:modified_chart} as if it was a new model and would evaluate the constraint above against every employee in the model. An incremental model validation engine, on the other hand, would identify that the previously established satisfaction of the constraint for employees Moss and Roy cannot have been possibly compromised by the changes made, and would only re-evaluate the constraint for Jen and Richmond instead. 
+
+Similarly, a non-incremental model-to-text transformation would generate and overwrite all employee reports from scratch. On the contrary, an incremental model-to-text transformation, would identify that it only needs to generate a new report for the new employee (Richmond), and to recompute and overwrite the contents of Jen's report (as she is now managing an additional employee)---but not the reports of Moss or Roy, as these cannot have been affected by the changes made to the model.
+
+\section{Prototype Implementation of Change-Based Persistence}
+\label{prototype_implementation_of_change-based_persistence}
+This work has implemented a prototype\footnote{The prototype is available under \url{https://github.com/epsilonlabs/emf-cbp}.} of the change-based model persistence format using the notification facilities provided by the Eclipse Modelling Framework. Our implementation uses a subclass of EMF's \emph{EContentAdapter} (\emph{ChangeEventAdapter}) to receive and record \emph{Notification} events produced by the framework for every model-element level change.
+
+\begin{figure}[th]
+	\centering
+	\includegraphics[width=\linewidth]{events}
+	\caption{Event classes to represent changes of models.}
+	\label{fig:events}
+\end{figure}
+
+Since not all change events are relevant to change-based persistence (e.g. EMF also produces change notifications when listeners/adapted are added/removed from the model), this work has defined a set of event classes to represent events of interest. The event classes are depicted in Fig. \ref{fig:events} as subclasses of the \emph{ChangeEvent} abstract class. 
+
+The \emph{ChangeEvent} class has a mutli-valued \emph{values} attribute which can accommodate both single-valued (e.g. set/add) or mutli-valued events (e.g. addAll/removeAll). \emph{ChangeEvent} can also accommodate different types of values, such as \emph{EObject}s for \emph{EReferenceEvents}, and primitive values (e.g. Integer, String) for \emph{EAttributeEvents}. The \emph{ChangeEvent} class also has a position attribute to hold the  index of an \emph{EObject} or a literal when they are added to a \emph{Resource}, \emph{EReference}, or \emph{EAttribute} with multiple values (Lst. \ref{lst:cbpmodel}, line 3, 6, 9, 12, 14, 17, 20). 
+
+Every time an \emph{EObject} is added to the model, a \emph{CreateEObjectEvent} and an \emph{AddToResourceEvent} are recorded (lines 2-3, 5-6, 8-9, and 16-17 in Lst. \ref{lst:cbpmodel}). When an EObject is deleted, or moved to a containment \emph{EReference} deeper in the model (Lst. \ref{lst:cbpmodel}, line 12, 14, 20), a \emph{RemoveFromResourceEvent} (Lst. \ref{lst:cbpmodel}, line 11, 13, 19) is recorded.
+
+The \emph{ChangeEventAdapter} receives EMF change notifications in its \emph{notifyChanged()} method and filters and transforms them into appropriate change events. As an example of how notifications are filtered and transformed, Listing \ref{lst:javacode} shows how the implementation handles \emph{Notification.UNSET} events based on the type of the changed feature i.e. an \emph{UnsetEAttributeEvent} is instantiated if the feature of the notifier is an \emph{EAttribute}, or an \emph{UnsetEReferenceEvent}  is created if the notifier is an \emph{EReference}. The transformed instances are then stored into a list of events in \emph{ChangeEventAdapter} (\emph{changeEvents}) for persistence. 
+
+\begin{lstlisting}[style=java,caption={Simplified Java code to handle notification events.},label=lst:javacode]
+public class ChangeEventAdapter extends EContentAdapter {
+    ...
+    @override
+    public void notifyChanged(Notification n) {
+        ...
+        switch (n.getEventType()) {
+        ... // other events
+        case Notification.UNSET: {
+            if (n.getNotifier() instanceof EObject) {
+                EStructuralFeature feature = (EStructuralFeature) n.getFeature();
+                if (feature instanceof EAttribute) {
+                    event = new UnsetEAttributeEvent();
+                } else if (feature instanceof EReference) {
+                    event = new UnsetEReferenceEvent();
+                }
+            } break;
+        } 
+        ... // other events
+\end{lstlisting}
+
+\begin{figure}[th]
+	\centering
+	\includegraphics[width=0.6\linewidth]{resources}
+	\caption{Factory, resources, and ChangeEventAdapter classes.}
+	\label{fig:resources}
+\end{figure}
+
+To integrate seamlessly with the EMF framework and to eventually support multiple concrete change-based serialisation formats (e.g. XML-formatted representation for readability and binary for performance/size), our implementation has created the \emph{CBPResource} abstract class, that extends EMF's built-in \emph{ResourceImpl} class. The role of the abstract class is to encapsulate all change recording functionality while the role of its concrete subclasses is to implement serialisation and de-serialisation. For example, \emph{CBPXMLResourceImpl} persists changes in a line-based format where every change is serialised as a single-line XML document. In this way, when a model changes, The implementation can append the new changes to the end of the model file without needing to serialise the entire model again. The implementation has also implemented a \emph{CBPXMLResourceFactory} class that extends EMF's \emph{ResourceFactoryImpl}, as the factory class for change-based models. Figure \ref{fig:resources} shows the relationships between these classes.
+
+
+
+\section{Load Time Reduction of Change-Based Models}
+\label{sec:load_time_reduction_of_change-based_models}
+The flowchart in Fig. \ref{fig:flowchart} provides an overview of the editing lifecycle of a CBP model, and the artefacts and data structures involved in it. It also highlights (starred blocks) the extensions proposed compared to the original CBP approach in \cite{yohannis2017turning}.
+
+In the original CBP approach, a model editing session involves three activities: loading a model, editing it, and saving new changes back to the model file\footnote{After saving a model, the user can make further changes and save it again.}. Loading is achieved by reading and replaying a sequence of change events stored in a CBP-formatted file. During the editing process, changes to the model are stored in a memory-based data structure (``Change events''), which are serialised and appended at the end of the CBP-formatted model file, and then flushed from memory, every time the model is saved.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{flowchart}
+	\caption{The context flowchart of optimising loading performance of CBP.}
+	\label{fig:flowchart}
+\end{figure}
+
+The proposed approach adds two new artefacts: a ``Model History'' data structure which is populated with change events and which is used to detect superseded events prior to saving, and an ``Ignore List'' file for each CBP model, which persists the position (i.e. line numbers) of superseded events so that they can be ignored the next time the model is loaded.
+
+\subsection{Model History}
+\label{subsec:model_history}
+The proposed approach uses a data structure that memorises elements' events and their position (line number) in a CBP representation so it can reason about the events of a particular element and determine which of them are superseded. For the rest of the discussion the line number in the CBP representation is referred to as the \emph{event number}. The proposed data structure is presented in Fig. \ref{fig:object_history} as a class diagram.  
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{object_history}
+	\caption{The class diagram of Model History.}
+	\label{fig:object_history}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\linewidth]{history_structure}
+	\caption{The object diagram of the model history of the CBP model in Listing \ref{lst:cbpmodel}.}
+	\label{fig:history_structure}
+\end{figure}
+
+A \emph{ModelHistory} has a \emph{URI} attribute to identify the model for which it records changes and can have many \emph{ElementHistory} elements. An \emph{ElementHistory} has an \emph{element} field that identifies the element that it refers to and an \emph{elementIsMoved} boolean flag. The  \emph{elementIsMoved} flag is used to indicate a \emph{move} event for the element (Sect. \ref{subsec:add_remove_and_move_operations} provides details of its use). Every \emph{ElementHistory} can have many \emph{FeatureHistories} to represent the editing histories of individual features (i.e. references/attributes) of the element.  A \emph{FeatureHistory} has three fields: \emph{type} to identify the feature's type (attribute or reference), \emph{name} to identify the feature's name, and \emph{featureIsMoved} that has the same role as attribute \emph{elementIsMoved} in \emph{ElementHistory}.
+
+An \emph{EventHistory} represents series of events of the same type in the CBP model. An \emph{EventHistory} has an attribute \emph{type} to identify the events' type and can have many \emph{Line}s. A \emph{Line} has a \emph{number} attribute to store the event number in the CBP model and a \emph{value} that is used to store the element involved in the event (it is only used for \emph{ADD}, \emph{REMOVE} and \emph{MOVE} events).
+
+Each \emph{FeatureHistory} can have many \emph{EventHistories} to represent the events that modify the value of the feature. Each \emph{ElementHistory} can have many \emph{EventHistories} to represent events that affect the state of the element (life-cycle and relations to multivalued features).
+
+Fig. \ref{fig:history_structure} shows the object diagram of the model history of the CBP model in Listing \ref{lst:cbpmodel}. The grey rectangles are \emph{History} objects related to the deleted node \emph{n3}. The rectangles with the dashed outline are \emph{Line} objects that represent superseded changes. The next sections present the algorithms that use the information stored in the model history data structure to identify events that have no impact in the final state of the model, i.e. superseded events. The algorithms produce the ignore list that is used in the proposed CBP loading algorithm.
+
+\subsection{Set and Unset Events}
+\label{subsec:set_and_unset_events}
+During the lifecycle of a model, a single-valued feature can be assigned many times. Each of the assignments is persisted as an event in the CBP model. However, only the last assigned value is necessary to obtain the current state of the feature.  That is, all events but the last can be ignored. For example, in Listing \ref{lst:set_unset_example}, the feature \emph{name} is assigned the ``A" value, nullified (unset), and finally assigned the ``B" value. That is, in the last state of the model: \emph{n1.name = ``B"}. As a result, the loading process could ignore all previous change events (lines 2 and 3) and only replay the last assignment event (line 4). 
+
+\begin{lstlisting}[style=eol,caption={The CBP representation of attribute \emph{name} assignments.},label=lst:set_unset_example]
+create n1 of Node
+set n1.name to "A"
+unset n1.name
+set n1.name to "B"
+\end{lstlisting}
+
+The algorithm that identifies superseded \emph{SET} and \emph{UNSET} events for a feature is presented in Alg. \ref{alg:set_unset_optimisation}. The algorithm has two inputs: a list of event numbers of \emph{SET} events and a list of event numbers of \emph{UNSET} events. The output of the algorithm is an \emph{ignoreList} that includes the event numbers that are superseded. The inputs lists can be trivially constructed from the model history data structure. For the \emph{name} feature in Listing \ref{lst:set_unset_example} these are: $setEventNumbers = \{2,4\}$ and $unsetEventNumbers = \{3\}$.
+
+\begin{algorithm}[H]
+	\begin{small}
+		\SetKwInOut{Input}{input}
+		\SetKwInOut{Output}{output}
+		\Input{two lists of Integer $setEventNumbers$}
+		\Output{a list of Integer $ignoreList$}
+		\SetKwBlock{Beginn}{beginn}{ende}
+		\Begin{
+			$setLastLine$ $\leftarrow$ getLastLine($setEventNumbers$)\;
+			$unsetLastLine$ $\leftarrow$ getLastLine($unsetEventNumbers$)\;
+			\uIf{$setLastLine > unsetLastLine$}{
+				$ignoreList \leftarrow (setEventNumbers \cup unsetEventNumbers) \setminus \{setLastLine\} $\;
+			}
+			\ElseIf{$setLastLine < unsetLastLine$}{
+				$ignoreList \leftarrow (setEventNumbers \cup unsetEventNumbers)$\;
+			}
+			\Return{$ignoreList$}\;
+		}
+	\end{small}
+	\caption{Algorithm to identify event numbers of superseded \emph{set} and \emph{unset} events}
+	\label{alg:set_unset_optimisation}
+\end{algorithm}
+
+The \emph{ignoreList} is populated as follows.
+In lines 2 and 3, the last event number of each input list is stored in \emph{setLastLine} and \emph{unsetLastLine} respectively. If $setLastLine > unsetLastLine$ (line 4) then $ignoreList = (setEventNumbers \cup unsetEventNumbers) \setminus  \{setLastLine\} $, i.e. all events except the last \emph{SET} event can be ignored. If $setLastLine < unsetLastLine$ (line 6) then $ignoreList = (setEventNumbers \cup unsetEventNumbers)$, i.e. all events can be ignored. For the \emph{name} feature in Listing \ref{lst:set_unset_example}, $ignoreList = \{2, 3\}$.
+
+\subsection{Add, Remove, and Move Events}\label{subsec:add_remove_and_move_operations}
+Similarly, the contents of a multi-valued feature can be modified many times. If the same element is added and removed multiple times,  only that last event is necessary to determine if the element should appear in the values of the feature. For example, in Listing \ref{lst:add_remove_move_reference},  nodes \emph{n2} and \emph{n3} are added to the \emph{children} feature of \emph{n1} (lines 4-5), and then \emph{n3} is removed (line 6). That is, in the last state of the model: \emph{n1.children = [n2]}. As a result, the loading process could ignore the events that represent the \emph{ADD} and \emph{REMOVE} events of \emph{n3}. So far, the algorithm only supports unique features (i.e. features that do not allow duplicate values). An extension to support duplicate values is part of our future work. 
+
+\begin{lstlisting}[style=eol,caption={Example of CBP representation of attribute \emph{values}'s add and remove operations.},label=lst:add_remove_move_reference]
+create n1 of Node
+create n2 of Node
+create n3 of Node
+add n2 to n1.children
+add n3 to n1.children
+remove n3 from n1.children
+\end{lstlisting}
+
+\begin{algorithm}[H]
+	\begin{small}
+		\SetKwInOut{Input}{input}
+		\SetKwInOut{Output}{output}
+		\SetKwProg{Struct}{struct}{}{end}
+		\Struct{Line}{
+			Integer $eventNumber$;
+			Anytype $value$;
+		}
+		\Input{two lists of Line $addEventLines$, $removeEventLines$, a variable of Anytype $operandValue$, a variable of Boolean $featureIsMoved$} % and $moveEventLines$, , an variable of Feature $feature$}
+		\Output{a list of Integer $ignoreList$}
+		\SetKwBlock{Beginn}{beginn}{ende}
+		\Begin{
+			\If{$featureIsMoved$ = false}{
+				$filteredAddLines$ $\leftarrow$ filterByValue($addEventLines$, $operandValue$)\;
+				$filteredRemoveLines$ $\leftarrow$ filterByValue($removeEventLines$, $operandValue$)\;
+				$addLastLine$ $\leftarrow$ getLastLine($filteredAddLines$)\;
+				$removeLastLine$ $\leftarrow$ getLastLine($filteredRemoveLines$)\;
+				\uIf{$addLastLine > removeLastLine$}{
+					$ignoreList \leftarrow (filteredAddLines.eventNumber \cup filteredRemoveLines.eventNumber \setminus \{addLastLine\} $\;
+				}
+				\ElseIf{$addLastLine < removeLastLine$}{
+					$ignoreList \leftarrow (filteredAddLines.eventNumber \cup filteredRemoveLines.eventNumber$\;
+				}
+			}
+			\Return{$ignoreList$}\;
+		}
+	\end{small}
+	\caption{Algorithm to identify event numbers of superseded \emph{add}, \emph{remove}, and \emph{move} events.}
+	\label{alg:add_remove_move_optimisation}
+\end{algorithm}
+
+The algorithm that identifies superseded \emph{ADD} and \emph{REMOVE} events for a feature is presented in Alg. \ref{alg:add_remove_move_optimisation}. The algorithm has four inputs: a list of Line objects of \emph{ADD} events, a list of Line objects of \emph{REMOVE} events, the element of interest and a flag that indicates a \emph{MOVE} event on the analysed feature.  The output of the algorithm is an \emph{ignoreList} that includes the event numbers that are superseded. The inputs lists can be easily constructed from the Model History data structure. For the \emph{children} feature in Listing \ref{lst:add_remove_move_reference} these are: $addEventLines = \{  \{4, n2 \}, \{5, n3 \} \}$, $removeEventLines = \{\{6, n3 \}\}$, $moveEventLines = \emptyset$,\linebreak $operandValue = n3$, and $featureIsMoved = \mathrm{False}$
+
+The \emph{ignoreList} is populated as follows. If the flag \emph{featureIsMoved} is true then nothing is added to the list (the need for this flag is explained later in this section). If the flag \emph{featureIsMoved} is false, then lines 6 and 7 filter the $addEventLines$ and $removeEventLines$ to only keep Lines for which the \emph{value} is equal to \emph{operandValue}. The filtered lists are stored in $filteredAddLines$ and $filteredRemoveLines$ respectively. The rest of the algorithm works similar to Alg. \ref{alg:set_unset_optimisation}, ignoring all events but the last if it was an \emph{ADD}, else ignoring all events. 
+
+The flag \emph{featureIsMoved} in line 5 in Alg. \ref{alg:add_remove_move_optimisation} is required to prevent ordering errors in the final state. As an illustration, the final states of the original CBP model presented in Listing  \ref{lst:move_attribute_example} and the effective CBP model of Listing \ref{lst:move_attribute_example_error} which \emph{does not} consider the \emph{featureIsMoved} flag are compared. In the effective CBP model, the events related to \emph{n2} have been ignored. Notice that the final state of the effective version is $p.values = [n3, n1]$  which is different from the original version $p.values = [n1, n3]$. The reason is that the move event in line 8 in the original version works on a different value than the one in the effective version.
+
+\noindent
+\begin{minipage}[t]{0.48\linewidth}
+	\begin{lstlisting}[style=eol,caption={The CBP representation of reference \emph{children}'s move event.},label=lst:move_attribute_example]
+	create p of Node
+	create n1
+	create n2
+	create n3
+	add n1 to p.children
+	add n2 to p.children
+	add n3 to p.children
+	move from 0 to 1 in p.children
+	remove n2 from p.children
+	\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\linewidth}
+	\begin{lstlisting}[style=eol,caption={The effective CBP representation of reference \emph{children}'s move event.},label=lst:move_attribute_example_error]
+	create p of Node
+	create n1
+	create n2
+	create n3
+	add n1 to p.children
+	add n3 to p.children
+	move from 0 to 1 in p.children
+	\end{lstlisting}
+\end{minipage}
+
+
+\subsection{Create and Delete Events}
+\label{subsec:create_and_delete_operations}
+When an element is deleted, it is completely removed from the model. Therefore, all events (create, set, unset, move, add, remove, delete) related to the element that happened before the event can be ignored, including all events related to its features, unless the element has been moved. For example, when node \emph{n3} in Listing \ref{lst:cbpmodel}  is deleted, the events in lines 5-6 and 8-10 are superseded. The effective CBP model of Listing \ref{lst:cbpmodel} is presented in Listing \ref{lst:cbpmodel_optimised}.
+
+\begin{lstlisting}[style=eol,caption={Change-based representation of the model of Fig. \ref{fig:initial_model} after removal of node \emph{n5}.},label=lst:cbpmodel_optimised]
+create n1 of Node
+set n1.name to "A"
+create n2 of Node
+set n2.name to "B"
+add n2 to n1.children
+\end{lstlisting}
+
+The algorithm that identifies superseded events for a deleted element is presented in Alg. \ref{alg:create_delete_optimisation}. The algorithm has one input: the deleted element. The output of the algorithm is an \emph{ignoreList} that includes the event numbers that are superseded. The inputs lists can be trivially constructed from the model history data structure.
+
+The algorithm starts by computing flag \emph{elementIsMoved} to determine whether the \emph{deletedElement} is already moved or not (line 2).
+If it is false then it is safe to remove all lines that refer to the element (line 3) (the reason for using this flag was explained in section \ref{subsec:add_remove_and_move_operations}), otherwise, no action is taken. The algorithm then retrieves all event histories (\emph{eventHistoryList}) that refer to the element (line 4) and iterates through each event history (lines 5-8). For every event history (\emph{eventHistory} -- line 5), the algorithm retrieves its lines \emph{lineList} (line 6) and puts all their event numbers into the \emph{ignoreList} (line 7). After that, the algorithm continues to iterate through all its features and puts all lines' event numbers into the \emph{ignoreList} (lines 12-15). Finally, the algorithm returns the \emph{ignoreList} as its output.
+
+\begin{algorithm}[H]
+	\begin{small}
+		\SetKwInOut{Input}{input}
+		\SetKwInOut{Output}{output}
+		\Input{a variable of Object $deletedElement$, a list of Integer $ignoreList$}
+		\Output{a list of Integer $ignoreList$}
+		\Begin{
+			$elementIsMoved$ $\leftarrow$ isElementMoved($deletedElement$)\;
+			\If{$elementIsMoved$ = false}{
+				$eventHistoryList$ $\leftarrow$ getAllEventHistories($deletedElement$)\; 
+				\ForEach{$eventHistory$ in $EventHistoryList$}{
+					$lineList$ $\leftarrow$ getLines($eventHistory$)\;
+					Add all event numbers in $lineList$ into $ignoreList$\; 
+				}
+				$featureList$ $\leftarrow$ getAllAttributes($deletedElement$)\;
+				\ForEach{$attribute$ in $featureList$}{
+					$eventHistoryList$ $\leftarrow$ getAllEventHistories($feature$)\;
+					\ForEach{$eventHistory$ in $EventHistoryList$}{
+						$lineList$ $\leftarrow$ getLines($eventHistory$)\;
+						Add all event numbers in $lineList$ into $ignoreList$\; 
+					}       
+				}   
+			}
+			\Return{$ignoreList$}\;
+		}
+	\end{small}
+	\caption{Algorithm to identify lines that are ignored after \emph{delete} events}
+	\label{alg:create_delete_optimisation}
+\end{algorithm}
+
+\subsection{Performance Evaluation}
+\label{sec:performance_evaluation}
+This work has developed the proposed efficient loading algorithm on top of the original CBP implementation from \cite{yohannis2017turning} and evaluated the algorithm's model loading performance, as well as its memory footprint and its impact on the time required to save changes made to CBP models. The evaluation was performed on Windows Server 2008 R2 64-bit with an Intel Xeon E5530 @2.40 GHz (2 processors) processor, 36 GB of memory, and the Java SE Runtime Environment (build 1.8.0\_66-b18).
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\linewidth]{conference_metamodel}
+	\caption{The conference metamodel.}   
+	\label{fig:node_metamodel}
+\end{figure}
+
+For our evaluation experiments, this work has used synthetic models of different sizes conforming to the \emph{conference} metamodel in Fig. \ref{fig:node_metamodel}. This work has selected this metamodel as it provides reasonable coverage of the features of the EMF modelling capabilities such as single- and multi-valued features, inheritance, and containment and non-containment references. This work had little option other than to use synthetic models for our experiments given that CBP is a very recent contribution and this work is not aware of any existing datasets containing real-world models expressed in a change-based format. Synthesising such models from existing state-based models (e.g. in XMI) was not an option either as state-based models do not capture editing-history-related information.    
+
+\subsubsection{Loading Time}
+\label{subsec:loading_time_test}
+
+For this experiment, this work created and persisted change-based models of different sizes (from 500 up to 33,000 elements) conforming to the conference metamodel of Fig. \ref{fig:node_metamodel} through a random model generator that simulates the actions of a human modeller (i.e. creates/deletes elements, sets/unsets values of their features). This work then used the proposed and the baseline loading algorithms to reconstruct the state of these models and measured their execution time. The results are shown in Fig. \ref{fig:loading_speed_conf} and demonstrate the considerable time savings (up to 44\% faster compared to the original CPB implementation for the largest models) delivered by the proposed loading algorithm.
+
+\begin{figure}[ht]	
+	\begin{subfigure}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{loading_speed_conf}
+		\caption{Optimised CBP vs Non-optimised CBP}\label{fig:loading_speed_conf}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{loading_speed_conf_ocbp_xmi}
+		\caption{Optimised CBP vs XMI}\label{fig:loading_speed_conf_ocbp_xmi}		
+	\end{subfigure}	
+	\caption{A comparison on load time between optimised CBP, non-optimised CBP, and XMI.}
+	\label{fig:loading_speed}
+\end{figure}
+
+For reference, this work also contrasts the execution time for the proposed algorithm against that of loading the equivalent state-based model in XMI. As can be observed in Fig. \ref{fig:loading_speed_conf_ocbp_xmi}, despite the improvements delivered by the new algorithm, loading change-based models is still roughly 10 times slower than their state-based counterparts. However, as discussed in\,\cite{yohannis2017turning}, this can be an acceptable trade-off considering the other benefits that change-based model persistence has the potential to offer (e.g. more precise differencing and hence more efficient incremental execution of model management programs and more effective model merging).
+
+\subsubsection{Saving Time}
+\label{subsec:saving_time_test}
+
+To achieve the benefits in terms of loading time demonstrated in Section \ref{subsec:loading_time_test}, our algorithm requires additional work to be done (i.e. to assemble the model history data structure and compute the ignore list delta) during the model saving phase as discussed in Section \ref{sec:towards_efficient_loading_of_change-based_models}. To assess the impact of this additional work on the overall time required to save changes in models, this work used a random model generator to build up multiple versions of a conference model through random sequences of creating, deleting and modifying model elements, starting with an empty model and growing it up to 21,000 elements. Every 100 new elements, the generator would save the changes and measure the time required for this activity to complete. This work repeated the experiment with our prototype, with the existing baseline CBP implementation and with state-based models stored in XMI.
+
+\begin{figure}[ht]	
+	\begin{subfigure}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{append_speed_conf}
+		\caption{Optimised vs non-optimised CBPs}\label{fig:append_speed_conf}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[t]{0.5\linewidth}
+		\includegraphics[width=\linewidth]{append_speed_conf_ocbp_xmi}
+		\caption{Optimised CBP vs XMI}\label{fig:append_speed_conf_ocbp_xmi}		
+	\end{subfigure}	
+	\caption{A comparison on time used to persist models between optimised CBP, non-optimised CBP, and XMI. The y-axis is $log_2$ scaled.}
+	\label{fig:append_speed}
+\end{figure}
+
+As shown in Fig. \ref{fig:append_speed_conf} the performance of the two CBP implementations is almost indistinguishable, which indicates that the cost of the extra work needed by the proposed algorithm at this stage is negligible. On the other hand, CBP implementations are significantly faster at saving changes than XMI. This is expected as the CBP implementations only need to save the last set of changes every time by appending them to the existing model file (and hence their performance is relative to the number of changes since last saved), while the XMI implementation needs to reconstruct an XML document for the entire state of the model and replace the contents of the model file every time (and hence its performance is relative to the size of the entire model). 
+
+\subsubsection{Memory Footprint}
+\label{subsec:memory_consumption}
+As the proposed loading algorithm requires the maintenance of an additional in-memory data structure that keeps track of element and feature editing histories (see Fig. \ref{fig:history_structure}), This work conducted an additional experiment to measure its memory footprint. As with the experiment in Sect. \ref{subsec:saving_time_test}, this work used a random model generator to build up a conference model through random sequences of creating, deleting and modifying model elements, starting with an empty model and growing it up to 10,000 elements. Every 100 new elements, this work measured the memory consumed by the program. The results are plotted in Fig. \ref{fig:memory_ocbp_cbp_xmi} and demonstrate the significant overhead of the used data structure.
+
+For reference, this work also includes the memory footprints of XMI in Fig. \ref{fig:memory_ocbp_cbp_xmi} to contrast it with both CBP implementations. As observed, XMI outperforms the optimised CBP representation and performs slightly better than the original CBP representation in terms of its memory footprint. 
+
+\begin{figure}[H]	
+	\centering
+	\includegraphics[width=\linewidth]{memory_ocbp_cbp_xmi}
+	\caption{A comparison on memory footprints between optimised CBP, non-optimised CBP, and XMI after loading models.}\label{fig:memory_ocbp_cbp_xmi}
+\end{figure}
+
+\subsubsection{Threats to Validity and Limitations}
+\label{sec:limitations_and_future_work}
+In this work, this work has only tested the algorithm on synthesised conference models which may not be representative of the complexity and interconnectedness of models in other domains. Diverse characteristics of models in different domains can affect the effectiveness of the algorithm and therefore yield different outcomes. 
+
+This work only supports ordered and unique features so far. Support for duplicate values means that removal of an item does not necessarily result in the item not being present in the feature value. Additional information must be captured to persist the number of copies and positions of the feature members. In the algorithms, this information can be used to properly generate the ignore list. In the case of unordered features, ``moved'' events do not exist, and hence further analysis is required to determine how this affects the use of the \emph{featureIsMoved} flag. 
+
+\section{Evaluation Strategy}
+\label{sec:evaluation_strategy}
+The solutions proposed in this research will be evaluated in the context they will be developed. For the evaluation where there are existing approaches that the algorithms and tools developed in this research seek to outperform (e.g. change-based incremental validation vs. state-based incremental validation), comparative evaluation will be conducted to assess the benefits and limitations of our approaches. For algorithms and tools that have no direct competitors in the literature, their contributions will be assessed in comparison to the baseline they seek to improve (e.g. in this case, persisting full change histories).
+
 \chapter{Research Plan}
 \label{ch:research_plan}
+For the next two years, this research plans to execute these following tasks. In every task, the correctness, performance, advantages, and shortcomings of the proposed change-based approaches are compared to equivalent approaches in state-based persistence. Every task, except Thesis Writing-Up, is expected to produce a publishable paper. The research timetable is displayed in Table \ref{table:research_timetable}.
 
+\begin{table}[h]
+	\centering
+	\caption{Change-Based Persistence Research timetable.}
+	\label{table:research_timetable}
+\begin{tabular}
+	{|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{6cm}|>{\centering\arraybackslash}p{6cm}|}
+			\hline 
+			Month & 2018 & 2019 \\ 
+			\hline 
+			1 & \multirow{4}{6cm}{\centering Task 1: Hybrid Model Persistence \& Change-Detection}  & \multirow{4}{6cm}{\centering Task 4: Model Merging} \\ 
+			\hhline{-~~}2 &  &  \\ 
+			\hhline{-~~}3 &  &  \\ 
+			\hhline{-~~}4 &  &  \\ 
+			\hline
+			5 & \textbf{Thesis Outline} & \textbf{40-Minute Seminar} \\ 
+			\hline 
+			6 & \multirow{2}{6cm}{\centering Task 2: File Size Reduction} & \multirow{4}{6cm}{\centering Task 5: Thesis Writing-Up} \\ 
+			\hhline{-~~}7 &  &  \\  
+			\hhline{--~}8 & \multirow{2}{6cm}{\centering Task 3: Model Comparison}  &  \\ 
+			\hhline{-~~}9 &  &  \\  
+			\hline
+			10 & \textbf{Thesis Audit}  & \textbf{Thesis Submission}  \\ 
+			\hline 
+			11 &  \multirow{2}{6cm}{\centering Task 3: (continue)} &  \\ 
+			\hhline{-~~}12 &  &  \\ 
+			\hline 
+\end{tabular} 
+\end{table}
 
+\begin{itemize}
+	\item \textbf{Task 1: Hybrid Model and Change-Detection.} It is conceivable that in some cases, persisting the entire change history in a model file will be an overkill and that persisting a base state and editing sessions operating on that state (e.g. capturing ``recent" changes) will be preferable. This task will extend state-based format so that it can incorporate information of changes. It will also investigate how integration with version control systems such as Git can enable the reconstruction of the full change history of a model in a transparent way.Four months will be allocated for this task. 
+	\item \textbf{Task 2: File Size Reduction.} This task will design and implement compression algorithms that can eliminate redundant changes within and across editing sessions, in order to reduce the storage requirements for persisting change-based models (e.g. if the value of a single-valued model element attribute is modiﬁed more than once in the context of an editing session, only the last modiﬁcation event can be persisted). Since an algorithm has already been applied to reduce the loading time of change-based files, similar algorithm can be applied to reduce the size of change-based files. Thus, only two months will be allocated for this task.
+	\item \textbf{Task 3: Model Comparison.} This task will design and implement efﬁcient algorithms for comparing change-based models, with a focus on models with shared editing histories. Due to the nature of change-based models, it is expected that the comparison algorithms developed in this task will differ substantially from current state-based model comparison algorithms. Four months will be allocated for this task. 
+	\item \textbf{Task 4: Model Merging.} In this task, the candidate will design and implement algorithms for conflict resolution and merging of change-based models. The algorithms developed in this task will leverage/extend the comparison algorithms developed in Task 3. Four months will be allocated for this task. 
+	\item \textbf{Task 5: Thesis Writing-Up.} Four months will be allocated for the write-up of the doctoral thesis  
+\end{itemize}
 
 \chapter{Publications}
 \label{ch:publications}
-
+Two papers have been written. The first paper \cite{yohannis2017turning} has been presented in the FlexMDE 2017 workshop and the second one \cite{yohannis2018algorithm} has been submitted to FASE 2018 and currently under review.
+\begin{enumerate}
+	\item A. Yohannis, F. Polack, and D. Kolovos, ``Turning models inside out," in Proceedings of the 3rd Workshop on Flexible Model Driven Engineering co-located with ACM IEEE 20th International Conference on Model Driven Engineering Languages and Systems (MoDELS 2017), 2017.
+	\item  A. Yohannis, H. Hoyos Rodriguez, F. Polack, and D. Kolovos, ``An algorithm for efficient loading of change-based models," in Proceedings of the 21st International Conference on Fundamental Approaches to Software Engineering (FASE 2018) co-located with The European Joint Conferences on Theory and Practice of Software (ETAPS 2018), 2018 (under review).
+\end{enumerate}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
