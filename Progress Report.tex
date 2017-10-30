@@ -114,7 +114,7 @@ United Kingdom\\
 
 \begin{abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Most of existing models are persisted in state-based formats. As an alternative, change-based persistence (CBP) also has been proposed. State-based persistence offers faster model loading time than change-based format, but outperformed by its counterpart when it comes to persisting and detecting changes of models. To gain the advantages of both approaches, this research aims to combine both type model representations to produce a hybrid model persistence. I am planning to integrate change-based approach into an existing state-based model persistences (e.g NeoEMF) and investigate the impact on change-detection, model merging, conflict resolution of models in the context of collaborative modelling. So far, a working implementation has been developed, and an algorithm to optimised the loading of CBP models has been proposed. Based on this work's previous investigation, CBPs persists changes of models faster than its state-based counterpart, and the proposed algorithm has been successfully loaded CBP models faster that its original loading approach. The implementation has been presented in the  FlexMDE 2017 workshop, and the proposed algorithm has been submitted to the FASE 2018 conference. 
+Most of the models in Model-Driven Engineering are persisted in state-based formats. As an alternative, change-based persistence (CBP) also has been proposed. State-based persistence (SBP) offers faster model loading time than change-based representation but outperformed by its counterpart when it comes to persisting and detecting changes of models. This research aims to integrate both types of persistence to produce a hybrid model persistence to gain the advantages of both approaches. The main impact of CBP on faster persisting and detecting changes, its knock-on effects on the model comparison and merging, as well as efforts to reduce its side effects will be investigated and evaluated. So far, an initial working implementation has been developed, and an algorithm to reduce the loading time of CBP models has been proposed. Based on this work's previous investigation, change-based approach persists changes of models faster than its state-based counterpart, and the proposed algorithm has successfully loaded CBP models faster than loading the models naively. The initial implementation has been presented in a workshop, and the proposed algorithm has been submitted to a conference and currently under review. A research plan to complete this work in the next two years is also explained in this report.
 \end{abstract}
 
 \tableofcontents
@@ -130,29 +130,32 @@ Most of existing models are persisted in state-based formats. As an alternative,
 \newpage
 
 \chapter{Introduction}
-\label{sec:introduction}
+\label{ch:introduction}
+
+\section{Background}
+\label{sec:background}
 Existing approaches for file-based model persistence in metamodelling architectures such as MOF and EMF are predominately state-based. In such approaches, model files contain snapshots of the models' contents, and activities like version control and change detection are left to external systems such as file-based version-control systems and model differencing facilities. Activities such as model comparison and change detection are computationally consuming for state-based models and can become a burden when larger models are developed in a collaborative setting. 
 
 In contrast to persisting the \emph{state} of models, the authors of  proposed a change-based approach that persists the full sequence of \emph{changes} made to models instead. The change-based approach comes with a number of envisioned benefits over state-based persistence, such as the ability to detect changes much faster and more precisely, which can then have positive knock-on effects on helping developers compare and merge models in collaborative modelling environments, as well as on facilitating faster incremental model validation and transformation \cite{rath2012derived,ogunyomi2015property}. However, change-based persistence comes at the cost of larger and ever-growing model files, and increased model loading time since all recorded changes need to be replayed to reconstruct a model's state \cite{yohannis2017turning}.
 
 \section{Research Questions}
 \label{sec:research_questions}
-To obtain the benefits of both type model persistence, this research aims to combine both approaches to produce a hybrid model persistence. The main advantage, faster change-detection, the knock-on effects on model comparison and merging, and efforts to reduce the downsides will be investigated as the consequences of the integration. Thus, this work aims to answer this following research questions: 
+This research aims to combine both approaches to produce a hybrid model persistence to gain the benefits of both type model persistence. The main advantage, faster change-detection, the knock-on effects on model comparison and merging, and efforts to reduce the downsides will be investigated as the consequences of the integration. Thus, this work aims to answer this following research questions: 
 \begin{enumerate} 
-	\item How to integrate change-based persistence and state-based persistence? And to what extend is performance of change-detection is improved compared to state-based persistence? 
+	\item How to integrate change-based persistence and state-based persistence? And to what extent is the performance of change-detection improved compared to state-based persistence? 
 	\item How to reduce the cost of larger and ever-growing file size and loading time of change-based models?
 	\item How to differentiate and compare change-based models? And what is its performance compared to state-based persistence?
-	\item How to resolve conflicts of and merge different change-based models? And how does it perform compared to state-based persistence?
+	\item How to resolve the conflicts of and merge different change-based models? And how does it perform compared to state-based persistence?
 \end{enumerate}
 
 \section{Research Objectives}
 \label{sec:research_objectives}
 this research aims to meet the following research objectives:
 \begin{enumerate}
-	\item Develop an architecture that integrates change-based persistence and state-based persistence, and evaluate its performance against state-based persistence on change detection.
-	\item Develop algorithms to reduce file size and loading time of change-based persistence models, and evaluate its performance together with its side effects (i.e. memory footprints). 
+	\item Develop an architecture that integrates change-based persistence and state-based persistence, and evaluate its performance against state-based persistence on change detection, and memory footprints as the side effect.
+	\item Develop algorithms to reduce file size and loading time of change-based persistence models, and evaluate its performance against the naive approach. 
 	\item Develop an algorithm to differentiate and compare change-based models, and evaluate its performance against its state-based counterparts.
-	\item Develop an algorithm to resolve conflict of and merge different change-based models, and evaluate its performance against resolving conflicts and merging in state-based persistence. 
+	\item Develop an algorithm to resolve conflict of and merge different change-based models, and evaluate its performance against its state-based counterparts. 
 \end{enumerate}
 
 \section{Research Outputs}
@@ -167,17 +170,30 @@ By the end of this research, these following outputs will have been produced:
 
 \section{Research Scoping}
 \label{sec:research_scoping}
-This research plan to integrate change-based and state-based persistence. Nevertheless, since the there are several existing instances of state-based persistence,  this research choose XMI and NeoEMF \cite{daniel2016neoemf}, as the former is the common standard of  model persistence and latter is a recent work that leverage the use of NoSQL databases for large-scale model persistence. 
+This research plan to integrate change-based and state-based persistence. Nevertheless, since there are several existing instances of state-based persistence,  this research choose XMI and NeoEMF \cite{daniel2016neoemf}, as the former is the typical standard of  model persistence and latter is a recent work that leverages the use of NoSQL databases for large-scale model persistence. 
 
 \chapter{Progress Review}
 \label{ch:progress_review}
 
 \section{Research Methods}
 \label{sec:research_methods}
-Design Science Research Methodology (DSRM) is selected as the main research method since the main output of this research is a design artefact, an environment to design and generate software modelling learning games. DSRM provides a comprehensive conceptual environment and activity guidelines for understanding, developing, executing, and evaluating a design artefact. Another reason is that it positions itself at the top level of abstraction without going into much detail of how to perform each activity, researchers can freely choose other more concrete research methods to carry out the activities. For example, literature reviews, surveys, or expert interviews can be conducted to determine research problems, motivations, solutions, and objectives as well as controlled experiments to measure and evaluate the effectiveness of the artefacts. DSRM consists of six activities: identify problem and motivation, define objectives for a solution, design and development, demonstration and evaluation, and communication. The progress of this research on these six activities are discussed in the following sections.
+The Design Science Research Methodology (DSRM) \cite{peffers2007design} is a methodology intended to guide the production and presentation of Design Science research in Information Systems. Design Science itself is essentially a problem-solving paradigm through the applications of artefacts which must be designed, built, and evaluated \cite{hevner2010design}. The artefacts can be constructs (vocabulary and symbols),
+models (abstractions and representations), methods (algorithms and practices), and instantiations (implemented and prototype systems) \cite{hevner2004design}. Although originally intended for Information Systems, the same approach can also be applied in Model-Driven Engineering since both address problems through the creation of technological artefacts. DSRM consists of six activities: identify problem and motivation, define objectives for a solution, design and development, demonstration, evaluation, and communication. The progress of this research on these six activities are discussed as follows.
+
+\begin{enumerate}
+	\item \textbf{Identify Problem and Motivation}. Research should define the specific research problems and justify the value of a solution. Literature review has being conducted to define problems and motivation that are relevant to the current context of Model-Driven Engineering. The problem and the motivation of this research are presented in Section \ref{sec:background}.   
+	\item \textbf{Define Objective for a Solution}. Research should infers the objectives of a solution from the problem definition and knowledge of what is possible and feasible. The research questions and objectives of this research are presented in Sections \ref{sec:research_questions} and \ref{sec:research_objectives}.
+	\item \textbf{Design and Development}. Artefacts should be designed and developed. This activity includes determining their functionalities, architectures, or underlying knowledge to create the artefacts to bring in solutions. For this activity, literature review and iterative development has being performed. The progress of this research in this activity can be found in Sections \ref{sec:literature_review}, \ref{sec:introduction_to_incrementality}, \ref{sec:prototype_implementation_of_change-based_persistence}, and \ref{sec:load_time_reduction_of_change-based_models}. 
+	\item \textbf{Demonstration}. Artefacts should demonstrate how they solve the problems. The demonstration of the artefact of this research has been (see Section \ref{sec:load_time_reduction_of_change-based_models}) and will be demonstrated in experimentation. 
+	\item \textbf{Evaluation}. Artefacts should be measured how well they solve the problems. Comparative study is the evaluation method to measure how well the artefacts proposed in this research perform compared to their baselines. This activity is discussed in detail in Section \ref{sec:evaluation_strategy} and some evaluations that already performed can be seen in Section \ref{sec:load_time_reduction_of_change-based_models}.
+	\item \textbf{Communication}. The research of design artefacts has to be disseminated. So far, this research has produced two papers (see Chapter \ref{ch:publications}). 
+\end{enumerate}
+
 
 \section{Literature Review}
 \label{sec:literature_review}
+So far, only literature review on Change Detection and Model Persistence that has been conducted. More literature review needs to be conducted on text-based file differentiation, and model/text-based file conflict resolution  and merging.  
+
 
 \subsection{Change Detection}
 \label{subsec:change_detection}
@@ -193,16 +209,9 @@ Several works have investigated alternative -- but also state-based -- model per
 
 Connected Data Objects (CDO) \cite{eclipse2017cdo}, provides support for database-backed model persistence as well as collaboration facilities, but its adoption necessitates the use of a separate version control system in the software development process (e.g. a Git repository for code and a CDO repository for models), which introduces well-recognised fragmentation and administration challenges \cite{barmpis2014evaluation}. Similar challenges are related to the adoption of other model-specific version control systems such as EMFStore\,\cite{koegel2010emfstore}.
 
-\section{Introduction to Incrementality}
-\label{introduction_to_incrementality}
-To illustrate the concept of incrementality, a contrived running example is used where after every modification to an organisational chart model (see Fig. \ref{fig:initial_chart_0}), the model needs to be:
-
-\begin{itemize}
-	\item Validated against a domain-specific constraint (that no employee directly manages more than 7 other employees).
-	\item Transformed into a number of employee reports (plain text files, one for each employee) through a model-to-text transformation. Each report should contain the name of the employee, and the names of her direct subordinates.
-\end{itemize}
-
-Figures \ref{fig:initial_chart_0} and \ref{fig:modified_chart} are two consecutive versions of a sample organisational chart model. When the validation constraint is evaluated against the first version of the model (Fig. \ref{fig:initial_chart_0}), it verifies that all three employees manage fewer than 7 other employees, and the model-to-text transformation then produces three text files that correspond to the employees in the model. In the sequel, in Fig. \ref{fig:modified_chart}, the model is updated to reflect that a new employee has been hired (Richmond) under the management of Jen. 
+\section{Introduction to Change-based Persistence}
+\label{sec:introduction_to_change-based_persistence}
+This section illustrates the concept of change-based persistence (CBP). Figures \ref{fig:initial_chart_0} and \ref{fig:modified_chart} are two consecutive versions of a sample organisational chart model. 
 
 \begin{figure}[ht]
 	\centering
@@ -218,12 +227,45 @@ Figures \ref{fig:initial_chart_0} and \ref{fig:modified_chart} are two consecuti
 	\label{fig:modified_chart}
 \end{figure}
 
-A non-incremental model validation engine would treat the model of Fig. \ref{fig:modified_chart} as if it was a new model and would evaluate the constraint above against every employee in the model. An incremental model validation engine, on the other hand, would identify that the previously established satisfaction of the constraint for employees Moss and Roy cannot have been possibly compromised by the changes made, and would only re-evaluate the constraint for Jen and Richmond instead. 
+To illustrate the proposed approach, List. \ref{lst:xmimodel} shows a state-based representation of the model of Fig. \ref{fig:modified_chart} in (simplified) XMI, and List. \ref{lst:cbpmodel} shows the proposed equivalent change-based representation of the same model. Instead of a snapshot of the state of the model, the representation of List. \ref{lst:cbpmodel} captures the complete sequence of change events (create/set/add/remove/delete) that were performed on the model since its creation, organised in editing sessions (2 editing sessions in the case of this model). Replaying these changes produces the same state as the one captured in List. \ref{lst:xmimodel}, so the proposed representation carries at least as much information as the state-based representation.
 
-Similarly, a non-incremental model-to-text transformation would generate and overwrite all employee reports from scratch. On the contrary, an incremental model-to-text transformation, would identify that it only needs to generate a new report for the new employee (Richmond), and to recompute and overwrite the contents of Jen's report (as she is now managing an additional employee)---but not the reports of Moss or Roy, as these cannot have been affected by the changes made to the model.
+Such a representation is particularly suitable for change-detection. For example, if the model had been modified in the editing session \emph{s1}, further changes of the model can be readily identified since then (i.e. in session \emph{s2} –- lines 15-20) instead of having to rediscover them through (expensive) state-based model differencing.
+
+\begin{lstlisting}[style=xmi,caption={State-based representation of the model of Figure \ref{fig:modified_chart} in (simplified) XMI.},label=lst:xmimodel]
+<Employee xmi:id="e2" name="Jen">
+<manages xmi:id="e1" name="Roy"/>
+<manages xmi:id="e3" name="Moss"/>
+<manages xmi:id="e4" name="Richmond"/>
+</Employee>
+\end{lstlisting}
+
+\begin{figure}[h]
+	\begin{lstlisting}[style=xml,caption={Change-based representation of the model of Figure \ref{fig:modified_chart}.},label=lst:cbpmodel]
+	<session id="s1"/>
+	<create eclass="Employee" epackage="employee" id="0"/>
+	<add-to-resource position="0"><value eobject="0"/></add-to-resource>
+	<set-eattribute name="name" target="0"><value literal="Roy"/></set-eattribute>
+	<create eclass="Employee" epackage="employee" id="1"/>
+	<add-to-resource position="1"><value eobject="1"/></add-to-resource>
+	<set-eattribute name="name" target="1"><value literal="Jen"/></set-eattribute>
+	<create eclass="Employee" epackage="employee" id="2"/>
+	<add-to-resource position="2"><value eobject="2"/></add-to-resource>
+	<set-eattribute name="name" target="1"><value literal="Moss"/></set-eattribute>
+	<remove-from-resource><value eobject="0"/></remove-from-resource>
+	<add-to-ereference name="manages" position="0" target="1"><value eobject="0"/></add-to-ereference>
+	<remove-from-resource><value eobject="2"/></remove-from-resource>
+	<add-to-ereference name="manages" position="1" target="1"><value eobject="2"/></add-to-ereference>
+	<session id="s2"/>
+	<create eclass="Employee" epackage="employee" id="3"/>
+	<add-to-resource position="1"><value eobject="3"/></add-to-resource>
+	<set-eattribute name="name" target="3"><value literal="Richmond"/></set-eattribute>
+	<remove-from-resource><value eobject="3"/></remove-from-resource>
+	<add-to-ereference name="manages" position="2" target="2"><value eobject="3"/></add-to-ereference>
+	\end{lstlisting}
+\end{figure}
 
 \section{Prototype Implementation of Change-Based Persistence}
-\label{prototype_implementation_of_change-based_persistence}
+\label{sec:prototype_implementation_of_change-based_persistence}
 This work has implemented a prototype\footnote{The prototype is available under \url{https://github.com/epsilonlabs/emf-cbp}.} of the change-based model persistence format using the notification facilities provided by the Eclipse Modelling Framework. Our implementation uses a subclass of EMF's \emph{EContentAdapter} (\emph{ChangeEventAdapter}) to receive and record \emph{Notification} events produced by the framework for every model-element level change.
 
 \begin{figure}[th]
@@ -235,11 +277,11 @@ This work has implemented a prototype\footnote{The prototype is available under 
 
 Since not all change events are relevant to change-based persistence (e.g. EMF also produces change notifications when listeners/adapted are added/removed from the model), this work has defined a set of event classes to represent events of interest. The event classes are depicted in Fig. \ref{fig:events} as subclasses of the \emph{ChangeEvent} abstract class. 
 
-The \emph{ChangeEvent} class has a mutli-valued \emph{values} attribute which can accommodate both single-valued (e.g. set/add) or mutli-valued events (e.g. addAll/removeAll). \emph{ChangeEvent} can also accommodate different types of values, such as \emph{EObject}s for \emph{EReferenceEvents}, and primitive values (e.g. Integer, String) for \emph{EAttributeEvents}. The \emph{ChangeEvent} class also has a position attribute to hold the  index of an \emph{EObject} or a literal when they are added to a \emph{Resource}, \emph{EReference}, or \emph{EAttribute} with multiple values (Lst. \ref{lst:cbpmodel}, line 3, 6, 9, 12, 14, 17, 20). 
+The \emph{ChangeEvent} class has a mutli-valued \emph{values} attribute which can accommodate both single-valued (e.g. set/add) or mutli-valued events (e.g. addAll/removeAll). \emph{ChangeEvent} can also accommodate different types of values, such as \emph{EObject}s for \emph{EReferenceEvents}, and primitive values (e.g. Integer, String) for \emph{EAttributeEvents}. The \emph{ChangeEvent} class also has a position attribute to hold the index of an \emph{EObject} or a literal when they are added to a \emph{Resource}, \emph{EReference}, or \emph{EAttribute} with multiple values (Lst. \ref{lst:cbpmodel}, line 3, 6, 9, 12, 14, 17, 20). 
 
 Every time an \emph{EObject} is added to the model, a \emph{CreateEObjectEvent} and an \emph{AddToResourceEvent} are recorded (lines 2-3, 5-6, 8-9, and 16-17 in Lst. \ref{lst:cbpmodel}). When an EObject is deleted, or moved to a containment \emph{EReference} deeper in the model (Lst. \ref{lst:cbpmodel}, line 12, 14, 20), a \emph{RemoveFromResourceEvent} (Lst. \ref{lst:cbpmodel}, line 11, 13, 19) is recorded.
 
-The \emph{ChangeEventAdapter} receives EMF change notifications in its \emph{notifyChanged()} method and filters and transforms them into appropriate change events. As an example of how notifications are filtered and transformed, Listing \ref{lst:javacode} shows how the implementation handles \emph{Notification.UNSET} events based on the type of the changed feature i.e. an \emph{UnsetEAttributeEvent} is instantiated if the feature of the notifier is an \emph{EAttribute}, or an \emph{UnsetEReferenceEvent}  is created if the notifier is an \emph{EReference}. The transformed instances are then stored into a list of events in \emph{ChangeEventAdapter} (\emph{changeEvents}) for persistence. 
+The \emph{ChangeEventAdapter} receives EMF change notifications in its \emph{notifyChanged()} method and filters and transforms them into appropriate change events. As an example of how notifications are filtered and transformed, Listing \ref{lst:javacode} shows how the implementation handles \emph{Notification.UNSET} events based on the type of the changed feature i.e. an \emph{UnsetEAttributeEvent} is instantiated if the feature of the notifier is an \emph{EAttribute}, or an \emph{UnsetEReferenceEvent} is created if the notifier is an \emph{EReference}. The transformed instances are then stored into a list of events in \emph{ChangeEventAdapter} (\emph{changeEvents}) for persistence. 
 
 \begin{lstlisting}[style=java,caption={Simplified Java code to handle notification events.},label=lst:javacode]
 public class ChangeEventAdapter extends EContentAdapter {
@@ -271,10 +313,68 @@ public class ChangeEventAdapter extends EContentAdapter {
 
 To integrate seamlessly with the EMF framework and to eventually support multiple concrete change-based serialisation formats (e.g. XML-formatted representation for readability and binary for performance/size), our implementation has created the \emph{CBPResource} abstract class, that extends EMF's built-in \emph{ResourceImpl} class. The role of the abstract class is to encapsulate all change recording functionality while the role of its concrete subclasses is to implement serialisation and de-serialisation. For example, \emph{CBPXMLResourceImpl} persists changes in a line-based format where every change is serialised as a single-line XML document. In this way, when a model changes, The implementation can append the new changes to the end of the model file without needing to serialise the entire model again. The implementation has also implemented a \emph{CBPXMLResourceFactory} class that extends EMF's \emph{ResourceFactoryImpl}, as the factory class for change-based models. Figure \ref{fig:resources} shows the relationships between these classes.
 
-
-
 \section{Load Time Reduction of Change-Based Models}
 \label{sec:load_time_reduction_of_change-based_models}
+
+\subsection{Running Example}
+\label{subsec:case_study}
+To explain change-based model persistence and the contribution of this work, we use the minimal tree metamodel (expressed in the Eclipse Modelling Framework's Ecore metamodelling language) and model illustrated in Figures \ref{fig:tree_metamodel} and \ref{fig:initial_model}.
+We chose EMF/Ecore as the de-facto standard for object-oriented metamodelling, and this contrived example to avoid unnecessary repetition in our discussion, while providing a reasonable coverage of the core features of Ecore (classes, single/multi-valued features, references and attributes).
+In this example, tree models consist of named nodes which can -- optionally -- contain other nodes (\emph{children} reference).
+
+\begin{figure}[ht]
+	\begin{subfigure}[t]{0.4\linewidth}
+		\centering
+		\includegraphics[width=0.8\linewidth]{node_metamodel}
+		\caption{The tree metamodel.}
+		\label{fig:tree_metamodel}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[t]{0.6\linewidth}
+		\centering
+		\includegraphics[width=0.6\linewidth]{initial_chart}
+		\caption{A model that conforms to the tree metamodel (n3 was created and then deleted)}
+		\label{fig:initial_model}
+	\end{subfigure}
+	\caption{A tree metamodel and its model as the running example.}
+	\label{fig:append_speed}
+\end{figure}
+
+The model in Fig. \ref{fig:initial_model} consists of two nodes \emph{n1}, \emph{n2}.
+To construct this model, we started by creating and naming three nodes (\emph{n1}, \emph{n2} and \emph{n3}).
+Nodes \emph{n2} and \emph{n3} were then added as children of \emph{n1}.
+Finally, node \emph{n3} was deleted from the model.
+The final state of the model is presented in a simplified (state-based) XMI representation in Listing \ref{lst:xmimodel}.
+
+\noindent
+\begin{minipage}[t]{0.5\linewidth}
+	\begin{lstlisting}[style=xmi,caption={State-based representation of the tree model in (simplified) XMI.},label=lst:xmimodel]
+	<Node id="n1" name="A">
+	<children id="n2" name="B"/>
+	</Node>
+	\end{lstlisting}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.5\linewidth}
+	\begin{lstlisting}[style=eol,caption={Change-based representation of the tree model.},label=lst:cbpmodel]
+	create n1 of Node
+	set n1.name to "A"      
+	create n2 of Node
+	set n2.name to "B"      
+	create n3 of Node
+	set n3.name to "C"      
+	add n2 to n1.children   
+	add n3 to n1.children
+	remove n3 from n1.children   
+	delete n3
+	\end{lstlisting}
+\end{minipage}
+
+In contrast to the state-based representation, a CBP representation of the model is illustrated in Listing \ref{lst:cbpmodel} (the syntax is a simplified version of the one introduced in\,\cite{yohannis2017turning}).
+Lines 1-6 record the creation and naming of the three nodes, lines 7 and 8 record the addition of \emph{n2} and \emph{n3} as children of \emph{n1} and lines 9-10 capture the deletion of \emph{n3} (deletion effectively involves a removal and a deletion event).
+
+For small changes made to large models, this approach can be beneficial since we only need to persist the change events every time -- as opposed to the entire model. However, loading the model by naively replaying all the events is not optimal particularly for models with long editing histories where prior events are often superseded by subsequent events. For example, creating \emph{n3} in line 5, naming it in line 6, and adding it to the children of \emph{n1} in line 8 are cancelled by the subsequent deletion of \emph{n3} in line 10. As such, the events in lines 5, 6, 8, 9 and 10 could be ignored during the loading process without affecting the eventual state of the model.
+
 The flowchart in Fig. \ref{fig:flowchart} provides an overview of the editing lifecycle of a CBP model, and the artefacts and data structures involved in it. It also highlights (starred blocks) the extensions proposed compared to the original CBP approach in \cite{yohannis2017turning}.
 
 In the original CBP approach, a model editing session involves three activities: loading a model, editing it, and saving new changes back to the model file\footnote{After saving a model, the user can make further changes and save it again.}. Loading is achieved by reading and replaying a sequence of change events stored in a CBP-formatted file. During the editing process, changes to the model are stored in a memory-based data structure (``Change events''), which are serialised and appended at the end of the CBP-formatted model file, and then flushed from memory, every time the model is saved.
