@@ -89,7 +89,7 @@
 \textbf{Progress Report}
 \vspace{1cm}
 
-\textbf{\large Change-Based Persistence for\\Model Change-Detection, Comparison, and Merging}
+\textbf{\large Model Change-Based Persistence}
 \vspace{1cm}
 
 Alfa Ryano Yohannis\\
@@ -136,9 +136,11 @@ This Chapter briefly presents the background of this work as well as the researc
 
 \section{Background}
 \label{sec:background}
-Existing approaches for file-based model persistence in metamodelling architectures such as MOF and EMF are predominately state-based. In such approaches, model files contain snapshots of the models' contents, and activities like version control and change detection are left to external systems such as file-based version-control systems and model differencing facilities. Activities such as change-detection -- to find parts that already changed of a model compared to its previous version/ancestor -- and model comparison -- to find the differences between models that come from the same ancestor -- are computationally consuming for state-based models. As a result,  the expensive cost can diminish the performance benefits of incremental execution of model management programs when working with large models, and it can become a burden when large models are developed in a collaborative setting.
+Most of models in the context of Model-Driven Engineering are persisted in state-based formats. In such approaches, model files contain snapshots of the models' contents, and activities like version control and change detection are left to external systems such as file-based version-control systems and model differencing facilities. Activities such as change-detection -- identifying parts that already changed of a model compared to its previous version/ancestor -- and model comparison -- finding the differences between models that come from the same ancestor -- are computationally consuming for state-based models. As a result, the expensive cost can become a burden for managing large models (e.g. identifying parts of a large model that have been changed to execute certain model transformations) and when large models are developed in a collaborative setting (e.g. large models are developed in parallel and at some time  need to be compared and merged).
 
-In contrast to persisting the \emph{state} of models, a change-based approach persists the full sequence of \emph{changes} made to models instead. The change-based approach comes with a number of envisioned benefits over state-based persistence, such as the ability to detect changes much faster and more precise, which can then have positive knock-on effects on helping developers compare and merge models in collaborative modelling environments, as well as on facilitating faster incremental model validation and transformation \cite{rath2012derived,ogunyomi2015property}. The change-based approach is faster in change-detection since changes of a model are already persisted in an ordered manner based on the sequence of their occurrence, and therefore they only need to be identified sequentially without having to explore all elements of the model and compare them to the elements of its previous model. The change-based approach is more precise since the changes are persisted with finer-granularity information (e.g. the order of the changes, previous values, etc.). Nevertheless, change-based persistence comes at the cost of larger and ever-growing model files, and increased model loading time since all recorded changes need to be replayed to reconstruct a model's state \cite{yohannis2017turning}.
+As an alternative to state-based persistence, this work proposes that a model can also be persisted in state-based format that is persisting the full sequence of \emph{changes} made to the model. The concept of change-based persistence is not new and has been used in persisting changes in software, object-oriented databases, and documents \cite{mens2002state,DBLP:conf/sde/LippeO92,DBLP:conf/caise/IgnatN05} and they reported that the approach can improve detecting differences more precisely at the semantic level -- that is by providing finer-granularity information (e.g. the order of the changes, elements that were changed, previous values, etc.) -- and therefore provide supports to resolve them. The sequential nature of change-based persistence means that changes made to a model can be identified linearly without having to explore and compare all elements of the model and its previous version. Based on these arguments, persisting models in change-based format will bring a number of envisioned benefits over state-based persistence, such as the ability to detect changes much faster and more precise, which can then have positive knock-on effects on helping developers compare and merge models in collaborative modelling environments, as well as on facilitating faster model management, such as incremental model validation and transformation \cite{rath2012derived,ogunyomi2015property}. 
+
+Nevertheless, change-based persistence comes at the cost of larger and ever-growing model files, and increased model loading time since all recorded changes need to be replayed to reconstruct a model's state \cite{yohannis2017turning}.
 
 The expensive cost of state-based models in change-detection and model differencing motivates this work to investigate change-based persistence to enable fast model comparison and differencing, and scales for large models developed in a collaborative setting. So far, this research had already attempted to reduce the loading time of change-based persistence (CBP) models and can save up 44\% loading time compared to loading CBP models naively (see Subsection \ref{sec:load_time_reduction_of_change-based_models} and Chapter \ref{ch:research_plan}, Task 1). However, since the optimised loading time is still significantly longer than the loading time of state-based persistence (SBP), this research proposes a hybrid model persistence (HMP) that is persistence using change-based and state-based approaches side-by-side. Every event of model modification is persisted into a change-based representation, and the change is applied to a state-based representation simultaneously. This dual persistence enables faster change-detection while still maintains the loading time of state-based persistence and its other advantages as well, such as partial and lazy loading of model elements \cite{ran2016partial,daniel2016neoemf}.  
 
@@ -195,90 +197,24 @@ By the end of this research, these following outputs will have been produced:
 \label{sec:research_scoping}
 This research plan to use change-based and state-based persistence side-by-side to persist models. Moreover, since there are several existing instances of state-based persistence, XMI and NeoEMF \cite{daniel2016neoemf} has been chosen for this research. The former is a standard model persistence format, and the latter is a recent work that leverages the use of NoSQL databases for large-scale model persistence. XMI was already used as a baseline in Task 1 (see Chapter \ref{ch:evaluation_strategy}) that has been completed for measuring the performance of the proposed algorithm in reducing the loading time of CBP models. For the other incoming tasks, NeoEMF will be used as the representation of state-based persistence.
 
-\chapter{Research Plan}
-\label{ch:research_plan}
-For the next two years, this research plans to execute these following tasks. In every task, the correctness, performance, advantages, and shortcomings of the proposed change-based approaches are compared to equivalent approaches in state-based persistence. Every task, except Thesis Writing-Up, is expected to produce a publishable paper. The research timetable is displayed in Table \ref{table:research_timetable}.
 
-\begin{table}[h]
-	\centering
-	\caption{Change-Based Persistence Research timetable.}
-	\label{table:research_timetable}
-	\begin{tabular}
-		{|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{4cm}|}
-		\hline 
-		Month & 2017 & 2018 & 2019 \\ 
-		\hline 
-		1               & \multirow{6}{4cm} & \multirow{3}{4cm}{\centering Hybrid Model Persistence}  & \multirow{2}{4cm}{\centering Task 5: File Size Reduction} \\ 
-		\hhline{-~~~}2  & & &  \\ 
-		\hhline{-~~-}3  & & & \textbf{40-Minute Seminar} \\ 
-		\hhline{-~--}4  & & \textbf{Thesis Outline} & \multirow{5}{4cm}{\centering Task 6: Thesis Writing-Up}  \\ 
-		\hhline{-~-~}5  & & \multirow{3}{4cm}{\centering Task 3: Model Comparison} & \\ 
-		\hhline{-~~~}6  & & & \\ 
-		\hhline{--~~}7  & \multirow{4}{4cm}{\centering Task 1: Change-Based Persistence \& Loading Optimisation} & &  \\  
-		\hhline{-~-~}8  & & \textbf{Thesis Audit}  &  \\ 
-		\hhline{-~--}9  & & \multirow{4}{4cm}{\centering Task 4: Model Merging} & \textbf{Thesis Submission} \\  
-		\hhline{-~~-}10 & &  &  \\ 
-		\hhline{--~~}11 & \textbf{Progress Report} &  &  \\ 
-		\hhline{--~~}12 & \multirow{1}{4cm}{\centering Task 2:} & &  \\ 
-		\hline 
-	\end{tabular} 
-\end{table}
-
-\begin{itemize}
-	\item \textbf{Task 1: Change-Based Persistence \& Loading Optimisation.}  The aim of this task is to prepare the ground for this research by developing a language-independent change-based model persistence format that can be used as a basis for hybrid model persistence, change-detection, model comparison, and model merging. Also, this task aims to design and implement an optimisation algorithm that reduces the loading time of change-based models by cancelling out events superseded by subsequent events. Five months was allocated for this task, and it already finished. Two papers had been written in this task. One paper was presented in a workshop, and another paper is under review.
-	\item \textbf{Task 2: Hybrid Model Persistence.} It is conceivable that in some cases, persisting the entire change history in a model file will be an overkill and that persisting a base state and editing sessions operating in that state (e.g. capturing ``recent" changes) will be preferable. This task will extend state-based format so that it can incorporate information of changes. It will also investigate how integration with version control systems such as Git can enable the reconstruction of the full change history of a model in a transparent way. Four months will be allocated for this task. 
-	\item \textbf{Task 3: Model Comparison.} This task will design and implement efficient algorithms for comparing change-based models, with a focus on models with shared editing histories. Due to the nature of change-based models, it is expected that the comparison algorithms developed in this task will differ substantially from current state-based model comparison algorithms. Three months will be allocated for this task. 
-	\item \textbf{Task 4: Model Merging.} In this task, the candidate will design and implement algorithms for conflict resolution and merging of change-based models. The algorithms developed in this task will leverage/extend the comparison algorithms developed in Task 3. Four months will be allocated for this task. 
-	\item \textbf{Task 5: File Size Reduction.} This task will design and implement compression algorithms that can eliminate redundant changes within and across editing sessions, in order to reduce the storage requirements for persisting change-based models (e.g. if the value of a single-valued model element attribute is modified more than once in the context of an editing session, only the last modification event can be persisted). Since an algorithm had already been applied to reduce the loading time of change-based files, a similar algorithm can be applied to reduce the size of change-based files. Thus, only two months will be allocated for this task. It is important to notice that since the contribution of this task is relatively not as significant as other tasks, it is given a lower priority than any other task and preferably to be dropped regarding limited time available.
-	\item \textbf{Task 6: Thesis Writing-Up.} Four months will be allocated for the write-up of the doctoral thesis.  
-\end{itemize}
-
-\chapter{Evaluation Strategy}
-\label{ch:evaluation_strategy}
- For evaluations where there are existing approaches that the algorithms and tools developed in this research seek to outperform (e.g. change-based incremental validation vs state-based incremental validation), comparative evaluations will be conducted to assess the benefits and limitations of the approaches. For algorithms and tools that have no direct competitors in the literature, such as reducing file size and loading time of change-based models, their contributions will be assessed in comparison to the baseline they seek to improve (e.g. in this case, persisting and replaying full change histories).  
-
-This research is divided into several tasks (see Chapter \ref{ch:research_plan}) with each task addresses a different problem. The evaluation strategy for each task is as follows. 
-\begin{enumerate}
-	\item \textbf{Task 1: Change-Based Persistence \& Loading Optimisation.} In this task, the implementation of change-based persistence is evaluated for its correctness by comparing the eventual state of a loaded CBP model to its state-based persistence in XMI. If they are equal, it means that the implementation has successfully loaded the change-based model. This comparison is performed across models with different size and metamodels.    
-    
-    The proposed algorithm to optimise the loading of CBP models was evaluated against the naive loading of CBP models and the loading of XMI models on loading times and memory footprints. Moreover, this research also compares the optimised CBP models against the naive CBP and XMI models on time required to save changes made on them. For the evaluation, synthetic models of different sizes were used. The evaluation for this task had been completed, and the results are presented in Subsection \ref{subsec:performance_evaluation}.
-	
-	Given that CBP is a very recent contribution, and it is almost impossible to find any existing datasets containing real-world models expressed in a change-based format, this research uses synthetic models for experiments. Nevertheless, instead of synthesising the models arbitrarily as had been performed in Task 1, the CBP models will be reverse engineered from several projects hosted on online version controls (e.g. GitHub, SVN). The differences between each version are translated into change events in CBP models. Therefore, the generated CBP models are more representative since they are generated from real-world projects. This strategy will be applied in the subsequent tasks.
-	
-	\item \textbf{Task 2: Hybrid Model Persistence (HMP).} Evaluation is performed to gain understanding the effects of HBP, using CBP and SBP side-by-side to persist models, on saving changes, disk space usage,change-detection, and loading/query time. HMP will be compared against CBP on time required to save changes and the disk space usage. The saving time and the disk space usage are selected as the dimensions of measurement since HMP requires model changes to be persisted into two kinds of persistence -- CBP and SBP -- which means it requires more saving time and disk space usage. HMP will also be compared against SBP on time used for change-detection and loading/queries since the intention of using CBP and SBP side-by-side is to gain faster change-detection while maintaining the loading/query time of SBP. The comparison will be performed across different model datasets that vary in size and metamodel.
-	
-	\item \textbf{Task 3: Model Comparison.} Evaluation is performed to gain understanding to what extent CBP model comparison performs against SBP model comparison. The proposed algorithm for CBP model comparison will be compared against its SBP counterpart implementation (e.g. EMF Compare) on the time and memory required to find differences between two models that originate from the same ancestor. Random operations will be executed to create a number of differences between both models and will be increased along iterations. The comparison will be applied across different model datasets that vary in size and metamodel.   
-	
-	\item \textbf{Task 4: Model Merging.} Evaluation is performed to gain understanding to what extent CBP model merging performs against SBP model merging. The proposed algorithm for CBP model merging will be compared against its SBP counterpart implementation (e.g. EMF Compare) on the time and memory required to resolve conflicts and merge two different models that originate from the same ancestor. Some rules will be defined to resolve the conflicts automatically and thus will remove the need for human intervention in the experiments. Random operations will be executed to create a number of differences between both models and will be increased along iterations. The comparison will be applied across different model datasets that vary in size and metamodel.   
-	
-	\item \textbf{Task 5: File Size Reduction.} Evaluation is performed to measure how much efficiency can be gained for the file size reduction algorithm. The performance of the proposed CBP file size reduction algorithm will be measured on file size, saving time, and memory footprint. It will be compared to the naive approach of saving CBP models. The comparison will be applied across different model datasets that vary in size and metamodel.   
-\end{enumerate}
-
-
-\chapter{Research Methodology}
-\label{ch:research_methodology}
-This research is using the Design Science Research Methodology (DSRM) \cite{peffers2007design} as its research methodology. DSRM is a methodology intended to guide the production and presentation of Design Science research in Information Systems. Design Science itself is essentially a problem-solving paradigm through the applications of artefacts which must be designed, built, and evaluated \cite{hevner2010design}. The artefacts can be constructs (vocabulary and symbols), models (abstractions and representations), methods (algorithms and practices), and instantiations (implemented and prototype systems) \cite{hevner2004design}. Although originally intended for Information Systems, the same approach can also be applied in Model-Driven Engineering since both address problems through the creation of technological artefacts. DSRM consists of six activities: identify problem and motivation, define objectives for a solution, design and development, demonstration, evaluation, and communication. The progress of this research on these six activities are discussed as follows.
-
-\begin{enumerate}
-	\item \textbf{Identify Problem and Motivation}. Research should define the specific research problems and justify the value of a solution. A literature review has been conducted to define problems and motivation that are relevant to the current context of Model-Driven Engineering. The problem and the motivation of this research are presented in Section \ref{sec:background}.   
-	\item \textbf{Define Objective for a Solution}. Research should infer the objectives of a solution from the problem definition and knowledge of what is possible and feasible. The research questions and objectives of this research are presented in Sections \ref{sec:research_questions} and \ref{sec:research_objectives}.
-	\item \textbf{Design and Development}. Artefacts should be designed and developed. This activity includes determining their functionalities, architectures, or underlying knowledge to create the artefacts to bring in solutions. For this activity, literature review and implementation development have being performed and it follows the best practices of software construction, such the use of unit testing, version control, and iterative development. The progress of this research in the activity can be found in Sections \ref{sec:literature_review}, \ref{sec:introduction_to_change-based_persistence}, \ref{sec:prototype_implementation_of_change-based_persistence}, and \ref{sec:load_time_reduction_of_change-based_models}. 
-	\item \textbf{Demonstration}. Artefacts should demonstrate how they solve the problems. The demonstration of the artefact of this research has been (see Section \ref{sec:load_time_reduction_of_change-based_models}) and will be demonstrated in experimentation. 
-	\item \textbf{Evaluation}. Artefacts should be measured how well they solve the problems. Comparative study is the main evaluation method used to measure how well the artefacts proposed in this research perform compared to their baselines. This activity is discussed in detail in Section \ref{ch:evaluation_strategy}, and some evaluations that already performed can be seen in Section \ref{sec:load_time_reduction_of_change-based_models}.
-	\item \textbf{Communication}. The research of design artefacts has to be disseminated. So far, this research has produced two papers (see Chapter \ref{ch:publications}). 
-\end{enumerate}
-
-\chapter{Publications}
-\label{ch:publications}
-Two papers have been written. The first paper \cite{yohannis2017turning} has been presented in the FlexMDE 2017 workshop and the second one \cite{yohannis2018algorithm} has been submitted to FASE 2018 and currently under review.
-\begin{enumerate}
-	\item A. Yohannis, F. Polack, and D. Kolovos, ``Turning models inside out," in Proceedings of the 3rd Workshop on Flexible Model Driven Engineering co-located with ACM IEEE 20th International Conference on Model Driven Engineering Languages and Systems (MoDELS 2017), 2017.
-	\item  A. Yohannis, H. Hoyos Rodriguez, F. Polack, and D. Kolovos, ``An algorithm for efficient loading of change-based models," submitted to the 21st International Conference on Fundamental Approaches to Software Engineering (FASE 2018) co-located with The European Joint Conferences on Theory and Practice of Software (ETAPS 2018), 2018 (under review).
-\end{enumerate}
 
 \chapter{Progress Review}
 \label{ch:progress_review}
 This chapter presents the progress of this research. It comprises literature review and the results of Task 1 (Chapter \ref{ch:research_plan}) that have been presented in a workshop and submitted in a conference (Chapter \ref{ch:publications}). 
+
+\section{Research Methodology}
+\label{sec:research_methodology}
+This research is using the Design Science Research Methodology (DSRM) \cite{peffers2007design} as its research methodology. DSRM is a methodology intended to guide the production and presentation of Design Science research in Information Systems. Design Science itself is essentially a problem-solving paradigm through the applications of artefacts which must be designed, built, and evaluated \cite{hevner2010design}. The artefacts can be constructs (vocabulary and symbols), models (abstractions and representations), methods (algorithms and practices), and instantiations (implemented and prototype systems) \cite{hevner2004design}. Although originally intended for Information Systems, the same approach can also be applied in Model-Driven Engineering since both address problems through the creation of technological artefacts. DSRM consists of six activities: identify problem and motivation, define objectives for a solution, design and development, demonstration, evaluation, and communication. The progress of this research on these six activities are discussed as follows.
+
+\begin{enumerate}
+    \item \textbf{Identify Problem and Motivation}. Research should define the specific research problems and justify the value of a solution. A literature review has been conducted to define problems and motivation that are relevant to the current context of Model-Driven Engineering. The problem and the motivation of this research are presented in Section \ref{sec:background}.   
+    \item \textbf{Define Objective for a Solution}. Research should infer the objectives of a solution from the problem definition and knowledge of what is possible and feasible. The research questions and objectives of this research are presented in Sections \ref{sec:research_questions} and \ref{sec:research_objectives}.
+    \item \textbf{Design and Development}. Artefacts should be designed and developed. This activity includes determining their functionalities, architectures, or underlying knowledge to create the artefacts to bring in solutions. For this activity, literature review and implementation development have being performed and it follows the best practices of software construction, such the use of unit testing, version control, and iterative development. The progress of this research in the activity can be found in Sections \ref{sec:literature_review}, \ref{sec:introduction_to_change-based_persistence}, \ref{sec:prototype_implementation_of_change-based_persistence}, and \ref{sec:load_time_reduction_of_change-based_models}. 
+    \item \textbf{Demonstration}. Artefacts should demonstrate how they solve the problems. The demonstration of the artefact of this research has been (see Section \ref{sec:load_time_reduction_of_change-based_models}) and will be demonstrated in experimentation. 
+    \item \textbf{Evaluation}. Artefacts should be measured how well they solve the problems. Comparative study is the main evaluation method used to measure how well the artefacts proposed in this research perform compared to their baselines. This activity is discussed in detail in Section \ref{ch:evaluation_strategy}, and some evaluations that already performed can be seen in Section \ref{sec:load_time_reduction_of_change-based_models}.
+    \item \textbf{Communication}. The research of design artefacts has to be disseminated. So far, this research has produced two papers (see Chapter \ref{ch:publications}). 
+\end{enumerate}
 
 \section{Literature Review}
 \label{sec:literature_review}
@@ -740,6 +676,73 @@ For reference, this work also includes the memory footprints of XMI in Fig. \ref
 In this work, this work has only tested the algorithm on synthesised conference models which may not be representative of the complexity and interconnectedness of models in other domains. Diverse characteristics of models in different domains can affect the effectiveness of the algorithm and therefore yield different outcomes. 
 
 This work only supports ordered and unique features so far. Support for duplicate values means that removal of an item does not necessarily result in the item not being present in the feature value. Additional information must be captured to persist the number of copies and positions of the feature members. In the algorithms, this information can be used to generate the ignore list properly. In the case of unordered features, ``moved'' events do not exist, and hence further analysis is required to determine how this affects the use of the \emph{featureIsMoved} flag. 
+
+\section{Evaluation Strategy}
+\label{sec:evaluation_strategy}
+For evaluations where there are existing approaches that the algorithms and tools developed in this research seek to outperform (e.g. change-based incremental validation vs state-based incremental validation), comparative evaluations will be conducted to assess the benefits and limitations of the approaches. For algorithms and tools that have no direct competitors in the literature, such as reducing file size and loading time of change-based models, their contributions will be assessed in comparison to the baseline they seek to improve (e.g. in this case, persisting and replaying full change histories).  
+
+This research is divided into several tasks (see Chapter \ref{ch:research_plan}) with each task addresses a different problem. The evaluation strategy for each task is as follows. 
+\begin{enumerate}
+    \item \textbf{Task 1: Change-Based Persistence \& Loading Optimisation.} In this task, the implementation of change-based persistence is evaluated for its correctness by comparing the eventual state of a loaded CBP model to its state-based persistence in XMI. If they are equal, it means that the implementation has successfully loaded the change-based model. This comparison is performed across models with different size and metamodels.    
+    
+    The proposed algorithm to optimise the loading of CBP models was evaluated against the naive loading of CBP models and the loading of XMI models on loading times and memory footprints. Moreover, this research also compares the optimised CBP models against the naive CBP and XMI models on time required to save changes made on them. For the evaluation, synthetic models of different sizes were used. The evaluation for this task had been completed, and the results are presented in Subsection \ref{subsec:performance_evaluation}.
+    
+    Given that CBP is a very recent contribution, and it is almost impossible to find any existing datasets containing real-world models expressed in a change-based format, this research uses synthetic models for experiments. Nevertheless, instead of synthesising the models arbitrarily as had been performed in Task 1, the CBP models will be reverse engineered from several projects hosted on online version controls (e.g. GitHub, SVN). The differences between each version are translated into change events in CBP models. Therefore, the generated CBP models are more representative since they are generated from real-world projects. This strategy will be applied in the subsequent tasks.
+    
+    \item \textbf{Task 2: Hybrid Model Persistence (HMP).} Evaluation is performed to gain understanding the effects of HBP, using CBP and SBP side-by-side to persist models, on saving changes, disk space usage,change-detection, and loading/query time. HMP will be compared against CBP on time required to save changes and the disk space usage. The saving time and the disk space usage are selected as the dimensions of measurement since HMP requires model changes to be persisted into two kinds of persistence -- CBP and SBP -- which means it requires more saving time and disk space usage. HMP will also be compared against SBP on time used for change-detection and loading/queries since the intention of using CBP and SBP side-by-side is to gain faster change-detection while maintaining the loading/query time of SBP. The comparison will be performed across different model datasets that vary in size and metamodel.
+    
+    \item \textbf{Task 3: Model Comparison.} Evaluation is performed to gain understanding to what extent CBP model comparison performs against SBP model comparison. The proposed algorithm for CBP model comparison will be compared against its SBP counterpart implementation (e.g. EMF Compare) on the time and memory required to find differences between two models that originate from the same ancestor. Random operations will be executed to create a number of differences between both models and will be increased along iterations. The comparison will be applied across different model datasets that vary in size and metamodel.   
+    
+    \item \textbf{Task 4: Model Merging.} Evaluation is performed to gain understanding to what extent CBP model merging performs against SBP model merging. The proposed algorithm for CBP model merging will be compared against its SBP counterpart implementation (e.g. EMF Compare) on the time and memory required to resolve conflicts and merge two different models that originate from the same ancestor. Some rules will be defined to resolve the conflicts automatically and thus will remove the need for human intervention in the experiments. Random operations will be executed to create a number of differences between both models and will be increased along iterations. The comparison will be applied across different model datasets that vary in size and metamodel.   
+    
+    \item \textbf{Task 5: File Size Reduction.} Evaluation is performed to measure how much efficiency can be gained for the file size reduction algorithm. The performance of the proposed CBP file size reduction algorithm will be measured on file size, saving time, and memory footprint. It will be compared to the naive approach of saving CBP models. The comparison will be applied across different model datasets that vary in size and metamodel.   
+\end{enumerate}
+
+\chapter{Research Plan}
+\label{ch:research_plan}
+For the next two years, this research plans to execute these following tasks. In every task, the correctness, performance, advantages, and shortcomings of the proposed change-based approaches are compared to equivalent approaches in state-based persistence. Every task, except Thesis Writing-Up, is expected to produce a publishable paper. The research timetable is displayed in Table \ref{table:research_timetable}.
+
+\begin{table}[h]
+    \centering
+    \caption{Change-Based Persistence Research timetable.}
+    \label{table:research_timetable}
+    \begin{tabular}
+        {|>{\centering\arraybackslash}p{1.1cm}|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{4cm}|>{\centering\arraybackslash}p{4cm}|}
+        \hline 
+        Month & 2017 & 2018 & 2019 \\ 
+        \hline 
+        1               & \multirow{6}{4cm} & \multirow{3}{4cm}{\centering Hybrid Model Persistence}  & \multirow{2}{4cm}{\centering Task 5: File Size Reduction} \\ 
+        \hhline{-~~~}2  & & &  \\ 
+        \hhline{-~~-}3  & & & \textbf{40-Minute Seminar} \\ 
+        \hhline{-~--}4  & & \textbf{Thesis Outline} & \multirow{5}{4cm}{\centering Task 6: Thesis Writing-Up}  \\ 
+        \hhline{-~-~}5  & & \multirow{3}{4cm}{\centering Task 3: Model Comparison} & \\ 
+        \hhline{-~~~}6  & & & \\ 
+        \hhline{--~~}7  & \multirow{4}{4cm}{\centering Task 1: Change-Based Persistence \& Loading Optimisation} & &  \\  
+        \hhline{-~-~}8  & & \textbf{Thesis Audit}  &  \\ 
+        \hhline{-~--}9  & & \multirow{4}{4cm}{\centering Task 4: Model Merging} & \textbf{Thesis Submission} \\  
+        \hhline{-~~-}10 & &  &  \\ 
+        \hhline{--~~}11 & \textbf{Progress Report} &  &  \\ 
+        \hhline{--~~}12 & \multirow{1}{4cm}{\centering Task 2:} & &  \\ 
+        \hline 
+    \end{tabular} 
+\end{table}
+
+\begin{itemize}
+    \item \textbf{Task 1: Change-Based Persistence \& Loading Optimisation.}  The aim of this task is to prepare the ground for this research by developing a language-independent change-based model persistence format that can be used as a basis for hybrid model persistence, change-detection, model comparison, and model merging. Also, this task aims to design and implement an optimisation algorithm that reduces the loading time of change-based models by cancelling out events superseded by subsequent events. Five months was allocated for this task, and it already finished. Two papers had been written in this task. One paper was presented in a workshop, and another paper is under review.
+    \item \textbf{Task 2: Hybrid Model Persistence.} It is conceivable that in some cases, persisting the entire change history in a model file will be an overkill and that persisting a base state and editing sessions operating in that state (e.g. capturing ``recent" changes) will be preferable. This task will extend state-based format so that it can incorporate information of changes. It will also investigate how integration with version control systems such as Git can enable the reconstruction of the full change history of a model in a transparent way. Four months will be allocated for this task. 
+    \item \textbf{Task 3: Model Comparison.} This task will design and implement efficient algorithms for comparing change-based models, with a focus on models with shared editing histories. Due to the nature of change-based models, it is expected that the comparison algorithms developed in this task will differ substantially from current state-based model comparison algorithms. Three months will be allocated for this task. 
+    \item \textbf{Task 4: Model Merging.} In this task, the candidate will design and implement algorithms for conflict resolution and merging of change-based models. The algorithms developed in this task will leverage/extend the comparison algorithms developed in Task 3. Four months will be allocated for this task. 
+    \item \textbf{Task 5: File Size Reduction.} This task will design and implement compression algorithms that can eliminate redundant changes within and across editing sessions, in order to reduce the storage requirements for persisting change-based models (e.g. if the value of a single-valued model element attribute is modified more than once in the context of an editing session, only the last modification event can be persisted). Since an algorithm had already been applied to reduce the loading time of change-based files, a similar algorithm can be applied to reduce the size of change-based files. Thus, only two months will be allocated for this task. It is important to notice that since the contribution of this task is relatively not as significant as other tasks, it is given a lower priority than any other task and preferably to be dropped regarding limited time available.
+    \item \textbf{Task 6: Thesis Writing-Up.} Four months will be allocated for the write-up of the doctoral thesis.  
+\end{itemize}
+
+\chapter{Publications}
+\label{ch:publications}
+Two papers have been written. The first paper \cite{yohannis2017turning} has been presented in the FlexMDE 2017 workshop and the second one \cite{yohannis2018algorithm} has been submitted to FASE 2018 and currently under review.
+\begin{enumerate}
+    \item A. Yohannis, F. Polack, and D. Kolovos, ``Turning models inside out," in Proceedings of the 3rd Workshop on Flexible Model Driven Engineering co-located with ACM IEEE 20th International Conference on Model Driven Engineering Languages and Systems (MoDELS 2017), 2017.
+    \item  A. Yohannis, H. Hoyos Rodriguez, F. Polack, and D. Kolovos, ``An algorithm for efficient loading of change-based models," submitted to the 21st International Conference on Fundamental Approaches to Software Engineering (FASE 2018) co-located with The European Joint Conferences on Theory and Practice of Software (ETAPS 2018), 2018 (under review).
+\end{enumerate}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
