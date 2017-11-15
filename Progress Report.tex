@@ -119,7 +119,7 @@ United Kingdom\\
 
 \begin{abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Most of the models in Model-Driven Engineering are persisted in state-based formats. However, this type of persistence is problematic when it comes to detecting changes in large-scale models. As an alternative, this work proposes a change-based approach that involves persisting the full sequence of changes made to models. Persisting models in a change-based format has the potential to deliver benefits over state-based persistence, such as the ability to detect changes much faster and more precisely, which can then yield positive knock-on effects on helping developers compare and merge models in collaborative modelling environments. Nevertheless, change-based persistence also comes with downsides such as ever-growing model file sizes and increased model loading time. So far, an initial change-based persistence format for EMF models has been developed, and an algorithm to reduce the loading time of change-based models has been proposed. Based on this work's interim results, the change-based approach persists changes in models faster than its state-based counterpart, and the proposed algorithm has successfully loaded change-based models faster than loading the models naively. The initial implementation has been presented in a workshop, and the proposed algorithm has been submitted to a conference and currently is under review. A research plan to complete this work in the next two years is also explained in this report.
+Most of the models in Model-Driven Engineering are persisted in state-based formats. However, this type of persistence is problematic when it comes to detecting changes in large-scale models. As an alternative, this work proposes a change-based approach that involves persisting the full sequence of changes made to models. Persisting models in a change-based format has the potential to deliver benefits over state-based persistence, such as the ability to detect changes much faster and more precisely, which can then yield positive knock-on effects on helping developers compare and merge models in collaborative modelling environments. Nevertheless, change-based persistence also comes with downsides, such as ever-growing model file sizes and increased model loading time. So far, an initial change-based persistence format for EMF models has been developed, and an algorithm to reduce the loading time of change-based models has been proposed. Based on this work's interim results, the change-based approach persists changes in models faster than its state-based counterpart, and the proposed algorithm has successfully loaded change-based models faster than loading the models naively. The initial implementation has been presented in a workshop, and the proposed algorithm has been submitted to a conference and currently is under review. A research plan to complete this work in the next two years is also explained in this report.
 \end{abstract}
 
 \tableofcontents
@@ -144,7 +144,7 @@ Most of the models in the context of Model-Driven Engineering are persisted in s
 
 As an alternative to state-based persistence, this work proposes that a model can also be persisted in a change-based format, which persists the full sequence of \emph{changes} made to the model instead. The concept of change-based persistence is not new and has been used in persisting changes to software, object-oriented databases, and hierarchical documents \cite{DBLP:journals/entcs/RobbesL07,DBLP:conf/sde/LippeO92,DBLP:conf/caise/IgnatN05}. The change-based approach can improve detecting differences more precisely at the semantic level -- that is by providing finer-granularity information (e.g. types of changes, the order of the changes, elements that were changed, previous values, etc.) -- and therefore provide support to resolve them \cite{mens2002state}. The ordered nature of change-based persistence means that changes made to a model can be identified sequentially without having to explore and compare all elements of the model and its previous version. Based on these arguments, this work proposes change-based persistence as an alternative approach to state-based persistence for models conforming to 3-layer metamodelling architectures such as EMF and MOF. Persisting models in change-based format will bring a number of envisioned benefits over state-based persistence, such as the ability to detect changes much faster and more precisely, which can then have positive knock-on effects on helping developers compare and merge models in collaborative modelling environments. 
 
-Nevertheless, change-based persistence also comes with downsides:  ever-growing model files and increased model loading time. A model that is modified frequently will increase considerably in file size since every change is added to the file. The increased file size (proportional to the number of persisted changes) will increase the loading time of the model since all changes have to be replayed to reconstruct the model's eventual state. These downsides have to be mitigated to enable the practical adoption of change-based persistence. One approach to reducing the file size of change-based models is by removing changes that do not affect the eventual state of the model. For the increased loading time, it can be mitigated by ignoring -- i.e. not replaying -- changes that are cancelled out by later changes or employing change-based and state-based persistence side-by-side so that the benefits of state-based persistence on loading time can be obtained.   
+Nevertheless, change-based persistence also comes with downsides, such as ever-growing model files and increased model loading time. A model that is modified frequently will increase considerably in file size since every change is added to the file. The increased file size (proportional to the number of persisted changes) will increase the loading time of the model since all changes have to be replayed to reconstruct the model's eventual state. These downsides have to be mitigated to enable the practical adoption of change-based persistence. One approach to reducing the file size of change-based models is by removing changes that do not affect the eventual state of the model. For the increased loading time, it can be mitigated by ignoring -- i.e. not replaying -- changes that are cancelled out by later changes or employing change-based and state-based persistence side-by-side so that the benefits of state-based persistence on loading time can be obtained.   
 
 \section{Research Questions}
 \label{sec:research_questions}
@@ -286,7 +286,7 @@ This work has conducted a literature review and existing tool exploration to ide
                 \raggedright
                 \begin{itemize}[leftmargin=9pt]
                     \setlength\itemsep{-5pt}
-                    \item[-] Faster for loading large models
+                    \item[-] Faster for loading large models \cite{pagan2011morsa,daniel2016neoemf}
                     \item[-] Supported by standard version controls (e.g. GitHub) \cite{koegel2010emfstore} 
                     \item[-] A default standard, no need integration with existing tools \cite{koegel2010emfstore}  
                 \end{itemize}
@@ -350,8 +350,6 @@ This section illustrates the concept of change-based persistence and its technic
 	\label{fig:modified_chart}
 \end{figure}
 
-List. \ref{lst:xmimodel_0} shows a state-based representation of the model of Fig. \ref{fig:modified_chart} in (simplified) XMI, and List. \ref{lst:change-based persistencemodel_0} shows the proposed equivalent change-based representation of the same model. Instead of a snapshot of the state of the model, the representation of List. \ref{lst:change-based persistencemodel_0} captures the complete sequence of changes (create/set/add/remove/delete) that were performed on the model since its creation, organised in editing sessions (2 editing sessions in the case of this model). The model is persisted per change which reduces the cost of saving; there is no need to persist the entire model in every change.  Replaying these changes produces the same state as the one captured in List. \ref{lst:xmimodel}, so the proposed representation carries at least as much information as the state-based representation.
-
 \begin{lstlisting}[style=xmi,caption={State-based representation of the model of Figure \ref{fig:modified_chart} in (simplified) XMI.},label=lst:xmimodel_0]
 <Employee xmi:id="e2" name="Jen">
 <manages xmi:id="e1" name="Roy"/>
@@ -360,7 +358,8 @@ List. \ref{lst:xmimodel_0} shows a state-based representation of the model of Fi
 </Employee>
 \end{lstlisting}
 
-\begin{figure}[h]
+List. \ref{lst:xmimodel_0} shows a state-based representation of the model of Fig. \ref{fig:modified_chart} in (simplified) XMI, and List. \ref{lst:change-based persistencemodel_0} shows the proposed equivalent change-based representation of the same model. Instead of a snapshot of the state of the model, the representation of List. \ref{lst:change-based persistencemodel_0} captures the complete sequence of changes (create/set/add/remove/delete) that were performed on the model since its creation, organised in editing sessions (2 editing sessions in the case of this model). The model is persisted per change which reduces the cost of saving; there is no need to persist the entire model in every change.  Replaying these changes produces the same state as the one captured in List. \ref{lst:xmimodel}, so the proposed representation carries at least as much information as the state-based representation.
+
 	\begin{lstlisting}[style=xml,caption={Change-based representation of the model of Figure \ref{fig:modified_chart}.},label=lst:change-based persistencemodel_0]
 	<session id="s1"/>
 	<create eclass="Employee" epackage="employee" id="0"/>
@@ -383,8 +382,7 @@ List. \ref{lst:xmimodel_0} shows a state-based representation of the model of Fi
 	<remove-from-resource><value eobject="3"/></remove-from-resource>
 	<add-to-ereference name="manages" position="2" target="2"><value eobject="3"/></add-to-ereference>
 	\end{lstlisting}
-\end{figure}
-
+    
 Such a representation is particularly suitable for change-detection. For example, if the model had been modified in the editing session \emph{s1}, further changes of the model can be readily identified since then (i.e. in session \emph{s2} –- lines 15-20) instead of having to rediscover them through (expensive) state-based model differencing.
 
 This work has implemented a prototype\footnote{The prototype is available under \url{https://github.com/epsilonlabs/emf-change-based persistence}.} of the change-based model persistence format using the notification facilities provided by the Eclipse Modelling Framework. The implementation uses \emph{ChangeEventAdapter}, a subclass of EMF's \emph{EContentAdapter}, to receive and record \emph{Notification} events produced by the framework for every model-element level change.
